@@ -1,0 +1,7 @@
+D:\Projects\CSharp\AutomatedWorker\bin\Debug\EventHook.dll.config
+D:\Projects\CSharp\AutomatedWorker\bin\Debug\EventHook.dll
+D:\Projects\CSharp\AutomatedWorker\bin\Debug\EventHook.pdb
+D:\Projects\CSharp\AutomatedWorker\EventHook\obj\Debug\EventHook.csproj.CoreCompileInputs.cache
+D:\Projects\CSharp\AutomatedWorker\EventHook\obj\Debug\EventHook.dll
+D:\Projects\CSharp\AutomatedWorker\EventHook\obj\Debug\EventHook.pdb
+D:\Projects\CSharp\AutomatedWorker\EventHook\obj\Debug\EventHook.csprojAssemblyReference.cache
