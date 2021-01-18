@@ -2,6 +2,7 @@
 using System.Linq;
 using System.IO;
 using JsonFlatFileDataStore;
+using EventHook;
 
 namespace AutomatedWorker.Data
 {
@@ -128,17 +129,11 @@ namespace AutomatedWorker.Data
         }
     }
 
-    public struct MousePoint
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-    }
-
     public enum MouseClickType { LEFTCLICK = 1, RIGHTCLICK = 2, DOUBLECLICK = 3 };
 
     public class Act
     {
-        public MousePoint ActPoint { get; set; }
+        public Mouse.MousePoint ActPoint { get; set; }
         public MouseClickType ClickType { get; set; }
         public string KeyboardText { get; set; }
     }

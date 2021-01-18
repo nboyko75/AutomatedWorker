@@ -78,7 +78,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base\JobManager.cs" />
-    <Compile Include="Base\Mouse.cs" />
     <Compile Include="Base\ObjectManager.cs" />
     <Compile Include="Forms\SelectObjectForm.cs">
       <SubType>Form</SubType>

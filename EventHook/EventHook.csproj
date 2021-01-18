@@ -76,6 +76,7 @@
     <Compile Include="Helpers\SyncFactory.cs" />
     <Compile Include="Hooks\WindowHookEx.cs" />
     <Compile Include="KeyboardWatcher.cs" />
+    <Compile Include="Mouse.cs" />
     <Compile Include="MouseWatcher.cs" />
     <Compile Include="PrintWatcher.cs" />
     <Compile Include="Hooks\WindowHook.cs" />

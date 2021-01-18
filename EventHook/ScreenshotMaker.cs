@@ -79,6 +79,11 @@ namespace EventHook
         /// Кисть для затенения изображения == Brush for shaded image
         /// </summary>
         static SolidColorBrush solidColorBrush;
+
+        static int mouseClickCount = 0;
+        public static Point MouseClickPoint { get { return mouseClickPoint; } }
+        public static Point MouseClickRelativePoint { get { return new Point(mouseClickPoint.X - firstPoint.X, mouseClickPoint.Y - firstPoint.Y); } }
+        static Point mouseClickPoint;
         #endregion
 
         #region Public methods
@@ -141,10 +146,12 @@ namespace EventHook
             canvas.Margin = new Thickness(0, 0, 0, 0);
             windowBackground.Content = canvas;
             windowBackground.Cursor = System.Windows.Input.Cursors.Cross;
+            windowBackground.Focusable = true;
 
             windowBackground.MouseLeftButtonDown += new System.Windows.Input.MouseButtonEventHandler(windowBackground_MouseLeftButtonDown);
             windowBackground.MouseMove += new System.Windows.Input.MouseEventHandler(windowBackground_MouseMove);
             windowBackground.MouseLeftButtonUp += new System.Windows.Input.MouseButtonEventHandler(windowBackground_MouseLeftButtonUp);
+            windowBackground.KeyDown += new System.Windows.Input.KeyEventHandler(windowBackground_KeyDown);
 
             rect.Stroke = br as System.Windows.Media.Brush;
             rect.StrokeThickness = RectThickness;
@@ -202,6 +209,12 @@ namespace EventHook
         {
             return new Point((firstPoint.X + secondPoint.X) / 2, (firstPoint.Y + secondPoint.Y) / 2);
         }
+
+        public static void CloseWindow()
+        {
+            bitmapSource = null;
+            windowBackground.Close();
+        }
         #endregion
 
         #region Private methods
@@ -237,6 +250,7 @@ namespace EventHook
             image = null;
             canvas = null;
             solidColorBrush = null;
+            mouseClickCount = 0;
         }
 
         /// <summary>
@@ -246,9 +260,22 @@ namespace EventHook
         /// <param name="e"></param>
         private static void windowBackground_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            firstPoint = e.GetPosition(windowBackground);
-            CreateInfo();
-            MoveDrawRectangle(firstPoint, firstPoint);
+            if (e == null) 
+            {
+                CloseWindow();
+            }
+            else if (mouseClickCount >= 1)
+            {
+                mouseClickPoint = e.GetPosition(windowBackground);
+                CloseWindow();
+            }
+            else
+            {
+                firstPoint = e.GetPosition(windowBackground);
+                CreateInfo();
+                MoveDrawRectangle(firstPoint, firstPoint);
+                mouseClickCount++;
+            }
         }
 
         /// <summary>
@@ -302,7 +329,7 @@ namespace EventHook
             CroppedBitmap cb = new CroppedBitmap((BitmapSource)image.Source, rectangle);
             bitmapSource = cb;
 
-            windowBackground.Close();
+            // CloseWindow();
         }
 
         /// <summary>
@@ -320,6 +347,14 @@ namespace EventHook
                     secondPoint.X = SystemParameters.PrimaryScreenWidth;
                 }
                 MoveDrawRectangle(firstPoint, secondPoint);
+            }
+        }
+
+        private static void windowBackground_KeyDown(object sender, KeyEventArgs e) 
+        {
+            if (e.Key == Key.Escape)
+            {
+                CloseWindow();
             }
         }
 
