@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Data;
+using System.Resources;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using AutomatedWorker.Base;
 using AutomatedWorker.Data;
+using AutomatedWorker.Properties;
 using AutomatedWorker.Tools;
 using EventHook;
 
@@ -28,8 +30,7 @@ namespace AutomatedWorker.Forms
         private ObjectManager objectManager;
         private SelectObjectForm objectForm;
 
-        private bool isScreenMaking = false;
-        private bool toWatchKeyboardInput = false;
+        private ResourceManager resManager;
         #endregion
 
         public MainForm()
@@ -54,6 +55,8 @@ namespace AutomatedWorker.Forms
             jobManager = new JobManager();
             objectManager = new ObjectManager();
             mousePoint = Mouse.GetScreenCenterPoint();
+
+            resManager = new ResourceManager("AutomatedWorker.Properties.Resources", typeof(Resources).Assembly);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -72,17 +75,7 @@ namespace AutomatedWorker.Forms
         private void btnNew_Click(object sender, EventArgs e)
         {
             // this.WindowState = FormWindowState.Minimized;
-            BitmapSource bt = null;
-            isScreenMaking = true;
-            try
-            {
-                bt = ScreenshotMaker.BeginSelectionImageFromScreen();
-            }
-            finally 
-            {
-                isScreenMaking = false;
-            }
-
+            BitmapSource bt = ScreenshotMaker.BeginSelectionImageFromScreen();
             if (bt == null) 
             {
                 return;
@@ -126,16 +119,18 @@ namespace AutomatedWorker.Forms
         {
             objectManager.Add(obj);
 
-            Act newAct = new Act { ActPoint = new Mouse.MousePoint { X = x, Y = y } };
+            Act newAct = new Act { ActPoint = new Mouse.MousePoint { X = x, Y = y }, ClickType = Config.DEFMOUSE_CLICKTYPE };
             int newActId = job.GetCount<Operation>() + 1;
             Operation newOp = new Operation { Id = newActId, Actor = obj, Action = newAct };
             job.Add<Operation>(newOp);
 
             Byte[] imgData = ImageUtils.LoadImageFromFile(obj.ImageSrc);
-            tblOperations.Rows.Add(newActId, obj.Name, newAct.ActPoint.X, newAct.ActPoint.Y, null, imgData, 1);
+            addRow(newOp, imgData);
+        }
 
-            /* Mouse.MoveTo(new System.Drawing.Point(newAct.ActPoint.X, newAct.ActPoint.Y));
-            Mouse.Click_Left(); */
+        private void addRow(Operation op, Byte[] imgData)
+        {
+            tblOperations.Rows.Add(op.Id, op.Name, op.Action.ActPoint.X, op.Action.ActPoint.Y, null, imgData, (int)op.Action.ClickType);
         }
 
         /* Не працює в режимі відладки */
@@ -170,10 +165,7 @@ namespace AutomatedWorker.Forms
 
         private void OnKeyInput(object sender, KeyInputEventArgs e)
         {
-            if (toWatchKeyboardInput)
-            {
-                // save keyboard input
-            }
+            
         }
 
         private void OnClipboardModified(object sender, ClipboardEventArgs e)
@@ -211,7 +203,8 @@ namespace AutomatedWorker.Forms
                 case "clDel":
                     if (MessageBox.Show("Are you sure want to delete this record?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) 
                     {
-                        row.Delete();
+                        grdOperations.Rows.RemoveAt(e.RowIndex);
+                        // row.Delete();
                         job.Delete<Operation>(id);
                     }
                     break;
@@ -304,11 +297,39 @@ namespace AutomatedWorker.Forms
             DataRow row = e.Row;
             int id = (int)row["Id"];
             Operation op = job.GetItem<Operation>(id);
-            op.Name = (string)row["Name"];
+            op.Name = (row["Name"] != DBNull.Value) ? (string)row["Name"] : "-";
             op.Action.ActPoint = new Mouse.MousePoint { X = (int)row["MouseX"], Y = (int)row["MouseY"] };
             op.Action.KeyboardText = (row["KeyboardText"] != DBNull.Value) ? (string)row["KeyboardText"] : null;
-            op.Action.ClickType = (MouseClickType)((int)row["ClickTypeId"]);
+            op.Action.ClickType = (MouseClickType)(row["ClickTypeId"] != DBNull.Value ? (int)row["ClickTypeId"] : (int)Config.DEFMOUSE_CLICKTYPE);
             job.Edit<Operation>(op);
+        }
+
+        private void btnRun_Click(object sender, EventArgs e)
+        {
+            foreach(Operation op in job.GetItems<Operation>())
+            {
+                System.Drawing.Bitmap img = new System.Drawing.Bitmap(op.Actor.ImageSrc);
+                System.Drawing.Point? imgPoint = WorkerScreen.GetFragmentPoint(img);
+                if (!imgPoint.HasValue) 
+                {
+                    MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+                }
+                Mouse.MoveTo(imgPoint.Value.X + op.Action.ActPoint.X, imgPoint.Value.Y + op.Action.ActPoint.Y);
+                switch (op.Action.ClickType) 
+                {
+                    case MouseClickType.LEFTCLICK:
+                        Mouse.Click_Left();
+                        break;
+                    case MouseClickType.RIGHTCLICK:
+                        Mouse.Click_Left();
+                        break;
+                    case MouseClickType.DOUBLECLICK:
+                        Mouse.Click_Left();
+                        break;
+                }
+                System.Threading.Thread.Sleep(Mouse.WAIT_FOR_CLICK);
+            }
         }
     }
 }

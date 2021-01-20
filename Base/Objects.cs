@@ -6,6 +6,8 @@ using EventHook;
 
 namespace AutomatedWorker.Data
 {
+    public enum MouseClickType { LEFTCLICK = 1, RIGHTCLICK = 2, DOUBLECLICK = 3 };
+
     public class Config
     {
         private string binDir;
@@ -15,6 +17,7 @@ namespace AutomatedWorker.Data
         private string dictDir;
 
         public const string OBJECTS = "Objects";
+        public const MouseClickType DEFMOUSE_CLICKTYPE = MouseClickType.LEFTCLICK;
         public string BinDir { get { return binDir; } }
         public string RootDir { get { return rootDir; } }
         public string DataDir { get { return dataDir; } }
@@ -128,8 +131,6 @@ namespace AutomatedWorker.Data
         {
         }
     }
-
-    public enum MouseClickType { LEFTCLICK = 1, RIGHTCLICK = 2, DOUBLECLICK = 3 };
 
     public class Act
     {

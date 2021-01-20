@@ -209,12 +209,6 @@ namespace EventHook
         {
             return new Point((firstPoint.X + secondPoint.X) / 2, (firstPoint.Y + secondPoint.Y) / 2);
         }
-
-        public static void CloseWindow()
-        {
-            bitmapSource = null;
-            windowBackground.Close();
-        }
         #endregion
 
         #region Private methods
@@ -233,6 +227,11 @@ namespace EventHook
             drawingVisual = new DrawingVisual();
             imgSourceShaded = new BitmapImage();
             rect = new Rectangle();
+        }
+
+        private static void CloseWindow()
+        {
+            windowBackground.Close();
         }
 
         /// <summary>
@@ -354,6 +353,7 @@ namespace EventHook
         {
             if (e.Key == Key.Escape)
             {
+                bitmapSource = null;
                 CloseWindow();
             }
         }

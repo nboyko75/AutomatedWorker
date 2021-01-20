@@ -61,38 +61,21 @@ namespace AutomatedWorker.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Back.
+        ///   Ищет локализованную строку, похожую на Fragment {0} is not found.
         /// </summary>
-        internal static string Back {
+        internal static string ErrFragmentIsNotFound {
             get {
-                return ResourceManager.GetString("Back", resourceCulture);
+                return ResourceManager.GetString("ErrFragmentIsNotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Cancel.
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static string Cancel {
+        internal static System.Drawing.Bitmap run {
             get {
-                return ResourceManager.GetString("Cancel", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Finish.
-        /// </summary>
-        internal static string Finish {
-            get {
-                return ResourceManager.GetString("Finish", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Ищет локализованную строку, похожую на Next.
-        /// </summary>
-        internal static string Next {
-            get {
-                return ResourceManager.GetString("Next", resourceCulture);
+                object obj = ResourceManager.GetObject("run", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

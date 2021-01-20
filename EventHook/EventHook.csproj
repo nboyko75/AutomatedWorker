@@ -95,6 +95,7 @@
     <Compile Include="Hooks\Library\Structs.cs" />
     <Compile Include="Hooks\Library\User32.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WorkerScreen.cs" />
     <Compile Include="ScreenshotMaker.cs" />
   </ItemGroup>
   <ItemGroup>

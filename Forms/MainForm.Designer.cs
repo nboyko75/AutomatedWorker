@@ -46,10 +46,6 @@
             this.mclCode = new System.Data.DataColumn();
             this.mclName = new System.Data.DataColumn();
             this.grdOperations = new System.Windows.Forms.DataGridView();
-            this.btnNew = new System.Windows.Forms.Button();
-            this.btnLoadJob = new System.Windows.Forms.Button();
-            this.lblJobCaption = new System.Windows.Forms.Label();
-            this.btnAdd = new System.Windows.Forms.Button();
             this.clDel = new System.Windows.Forms.DataGridViewButtonColumn();
             this.clImage = new System.Windows.Forms.DataGridViewImageColumn();
             this.clName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -57,6 +53,11 @@
             this.clMouseY = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.clClickTypeId = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.clKeyboardText = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btnNew = new System.Windows.Forms.Button();
+            this.btnLoadJob = new System.Windows.Forms.Button();
+            this.lblJobCaption = new System.Windows.Forms.Label();
+            this.btnAdd = new System.Windows.Forms.Button();
+            this.btnRun = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dsOperations)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tblOperations)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tblMouseClickType)).BeginInit();
@@ -205,49 +206,6 @@
             this.grdOperations.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdOperations_CellContentClick);
             this.grdOperations.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.grdOperations_CellEndEdit);
             // 
-            // btnNew
-            // 
-            this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnNew.Location = new System.Drawing.Point(103, 324);
-            this.btnNew.Name = "btnNew";
-            this.btnNew.Size = new System.Drawing.Size(87, 23);
-            this.btnNew.TabIndex = 11;
-            this.btnNew.Text = "New fragment";
-            this.btnNew.UseVisualStyleBackColor = true;
-            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
-            // 
-            // btnLoadJob
-            // 
-            this.btnLoadJob.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnLoadJob.Location = new System.Drawing.Point(22, 324);
-            this.btnLoadJob.Name = "btnLoadJob";
-            this.btnLoadJob.Size = new System.Drawing.Size(75, 23);
-            this.btnLoadJob.TabIndex = 14;
-            this.btnLoadJob.Text = "Load macro";
-            this.btnLoadJob.UseVisualStyleBackColor = true;
-            this.btnLoadJob.Click += new System.EventHandler(this.btnLoadJob_Click);
-            // 
-            // lblJobCaption
-            // 
-            this.lblJobCaption.AutoSize = true;
-            this.lblJobCaption.ForeColor = System.Drawing.SystemColors.HotTrack;
-            this.lblJobCaption.Location = new System.Drawing.Point(28, 15);
-            this.lblJobCaption.Name = "lblJobCaption";
-            this.lblJobCaption.Size = new System.Drawing.Size(40, 13);
-            this.lblJobCaption.TabIndex = 15;
-            this.lblJobCaption.Text = "Macro:";
-            // 
-            // btnAdd
-            // 
-            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnAdd.Location = new System.Drawing.Point(196, 324);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(115, 23);
-            this.btnAdd.TabIndex = 16;
-            this.btnAdd.Text = "Add existed fragment";
-            this.btnAdd.UseVisualStyleBackColor = true;
-            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-            // 
             // clDel
             // 
             this.clDel.HeaderText = "";
@@ -312,11 +270,67 @@
             this.clKeyboardText.Name = "clKeyboardText";
             this.clKeyboardText.Width = 150;
             // 
+            // btnNew
+            // 
+            this.btnNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnNew.Location = new System.Drawing.Point(103, 324);
+            this.btnNew.Name = "btnNew";
+            this.btnNew.Size = new System.Drawing.Size(87, 23);
+            this.btnNew.TabIndex = 11;
+            this.btnNew.Text = "New fragment";
+            this.btnNew.UseVisualStyleBackColor = true;
+            this.btnNew.Click += new System.EventHandler(this.btnNew_Click);
+            // 
+            // btnLoadJob
+            // 
+            this.btnLoadJob.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnLoadJob.Location = new System.Drawing.Point(22, 324);
+            this.btnLoadJob.Name = "btnLoadJob";
+            this.btnLoadJob.Size = new System.Drawing.Size(75, 23);
+            this.btnLoadJob.TabIndex = 14;
+            this.btnLoadJob.Text = "Load macro";
+            this.btnLoadJob.UseVisualStyleBackColor = true;
+            this.btnLoadJob.Click += new System.EventHandler(this.btnLoadJob_Click);
+            // 
+            // lblJobCaption
+            // 
+            this.lblJobCaption.AutoSize = true;
+            this.lblJobCaption.ForeColor = System.Drawing.SystemColors.HotTrack;
+            this.lblJobCaption.Location = new System.Drawing.Point(28, 15);
+            this.lblJobCaption.Name = "lblJobCaption";
+            this.lblJobCaption.Size = new System.Drawing.Size(40, 13);
+            this.lblJobCaption.TabIndex = 15;
+            this.lblJobCaption.Text = "Macro:";
+            // 
+            // btnAdd
+            // 
+            this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnAdd.Location = new System.Drawing.Point(196, 324);
+            this.btnAdd.Name = "btnAdd";
+            this.btnAdd.Size = new System.Drawing.Size(115, 23);
+            this.btnAdd.TabIndex = 16;
+            this.btnAdd.Text = "Add existed fragment";
+            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            // 
+            // btnRun
+            // 
+            this.btnRun.Image = global::AutomatedWorker.Properties.Resources.run;
+            this.btnRun.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnRun.Location = new System.Drawing.Point(302, 9);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(69, 23);
+            this.btnRun.TabIndex = 17;
+            this.btnRun.Text = "Run";
+            this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(739, 359);
+            this.Controls.Add(this.btnRun);
             this.Controls.Add(this.grdOperations);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.lblJobCaption);
@@ -364,5 +378,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn clMouseY;
         private System.Windows.Forms.DataGridViewComboBoxColumn clClickTypeId;
         private System.Windows.Forms.DataGridViewTextBoxColumn clKeyboardText;
+        private System.Windows.Forms.Button btnRun;
     }
 }
