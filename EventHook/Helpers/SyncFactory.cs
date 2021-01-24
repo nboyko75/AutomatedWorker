@@ -69,9 +69,7 @@ namespace EventHook.Helpers
                 while (Volatile.Read(ref msgHandler) == null)
                 {
                     Thread.Sleep(10);
-                }
-
-                ;
+                };
 
                 return Volatile.Read(ref msgHandler);
             });

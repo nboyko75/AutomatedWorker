@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Resources;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using System.Threading;
+using System.Threading.Tasks;
 using AutomatedWorker.Base;
 using AutomatedWorker.Data;
 using AutomatedWorker.Properties;
@@ -306,29 +309,63 @@ namespace AutomatedWorker.Forms
 
         private void btnRun_Click(object sender, EventArgs e)
         {
-            foreach(Operation op in job.GetItems<Operation>())
+            List<Operation> ops = job.GetItems<Operation>();
+            if (ops.Count == 0) 
             {
-                System.Drawing.Bitmap img = new System.Drawing.Bitmap(op.Actor.ImageSrc);
-                System.Drawing.Point? imgPoint = WorkerScreen.GetFragmentPoint(img);
-                if (!imgPoint.HasValue) 
-                {
-                    MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    break;
-                }
+                return;
+            }
+            CancellationTokenSource source = new CancellationTokenSource();
+            CancellationToken token = source.Token;
+            Task currentTask = Task.Factory.StartNew(() => runOperation(ops[0], source, ops.Count == 1), token,
+                TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+            for (int i = 1; i < ops.Count; i++)
+            {
+                Operation op = ops[i];
+                bool isLast = i == ops.Count - 1;
+                currentTask = currentTask.ContinueWith(t => runOperation(op, source, isLast), token,
+                    TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+        }
+
+        private void runOperation(Operation op, CancellationTokenSource source, bool isLast)
+        {
+            CancellationToken token = source.Token;
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+            // Thread.Sleep(Mouse.WAIT_FOR_CLICK);
+            System.Drawing.Bitmap img = new System.Drawing.Bitmap(op.Actor.ImageSrc);
+            System.Drawing.Point? imgPoint = WorkerScreen.GetFragmentPoint(img);
+            if (isLast)
+            {
+                Mouse.MoveTo(1620, 400);
+            }
+            else 
+            {
+            if (!imgPoint.HasValue)
+            {
+                MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                source.Cancel();
+                return;
+            }
                 Mouse.MoveTo(imgPoint.Value.X + op.Action.ActPoint.X, imgPoint.Value.Y + op.Action.ActPoint.Y);
-                switch (op.Action.ClickType) 
-                {
-                    case MouseClickType.LEFTCLICK:
-                        Mouse.Click_Left();
-                        break;
-                    case MouseClickType.RIGHTCLICK:
-                        Mouse.Click_Left();
-                        break;
-                    case MouseClickType.DOUBLECLICK:
-                        Mouse.Click_Left();
-                        break;
-                }
-                System.Threading.Thread.Sleep(Mouse.WAIT_FOR_CLICK);
+            }
+            switch (op.Action.ClickType)
+            {
+                case MouseClickType.LEFTCLICK:
+                    Mouse.Click_Left();
+                    break;
+                case MouseClickType.RIGHTCLICK:
+                    Mouse.Click_Left();
+                    break;
+                case MouseClickType.DOUBLECLICK:
+                    Mouse.Click_Left();
+                    break;
+            }
+            if (isLast) 
+            {
+                source.Dispose();
             }
         }
     }

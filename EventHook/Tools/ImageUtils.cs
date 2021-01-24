@@ -12,7 +12,7 @@ namespace EventHook.Tools
         {
             using (var fileStream = new FileStream(filePath, FileMode.Create))
             {
-                BitmapEncoder encoder = new PngBitmapEncoder();
+                BitmapEncoder encoder = new BmpBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(image));
                 encoder.Save(fileStream);
             }
