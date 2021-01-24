@@ -314,16 +314,17 @@ namespace AutomatedWorker.Forms
             {
                 return;
             }
+
             CancellationTokenSource source = new CancellationTokenSource();
             CancellationToken token = source.Token;
             Task currentTask = Task.Factory.StartNew(() => runOperation(ops[0], source, ops.Count == 1), token,
-                TaskCreationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+                TaskCreationOptions.None, TaskScheduler.Default);
             for (int i = 1; i < ops.Count; i++)
             {
                 Operation op = ops[i];
                 bool isLast = i == ops.Count - 1;
                 currentTask = currentTask.ContinueWith(t => runOperation(op, source, isLast), token,
-                    TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.FromCurrentSynchronizationContext());
+                    TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
             }
         }
 
@@ -335,20 +336,20 @@ namespace AutomatedWorker.Forms
                 return;
             }
             // Thread.Sleep(Mouse.WAIT_FOR_CLICK);
-            System.Drawing.Bitmap img = new System.Drawing.Bitmap(op.Actor.ImageSrc);
-            System.Drawing.Point? imgPoint = WorkerScreen.GetFragmentPoint(img);
             if (isLast)
             {
                 Mouse.MoveTo(1620, 400);
             }
             else 
             {
-            if (!imgPoint.HasValue)
-            {
-                MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                source.Cancel();
-                return;
-            }
+                System.Drawing.Bitmap img = new System.Drawing.Bitmap(op.Actor.ImageSrc);
+                System.Drawing.Point? imgPoint = WorkerScreen.GetFragmentPoint(img);
+                if (!imgPoint.HasValue)
+                {
+                    MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    source.Cancel();
+                    return;
+                }
                 Mouse.MoveTo(imgPoint.Value.X + op.Action.ActPoint.X, imgPoint.Value.Y + op.Action.ActPoint.Y);
             }
             switch (op.Action.ClickType)
