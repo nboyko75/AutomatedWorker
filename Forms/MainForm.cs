@@ -6,8 +6,8 @@ using System.Windows.Media.Imaging;
 using AutomatedWorker.Base;
 using AutomatedWorker.Data;
 using AutomatedWorker.Properties;
-using AutomatedWorker.Tools;
 using EventHook;
+using EventHook.Tools;
 
 namespace AutomatedWorker.Forms
 {

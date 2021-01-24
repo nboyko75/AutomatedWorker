@@ -86,7 +86,6 @@
     <Compile Include="Forms\SelectObjectForm.Designer.cs">
       <DependentUpon>SelectObjectForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools\NumberUtils.cs" />
     <Compile Include="Base\Objects.cs" />
     <Compile Include="Forms\LoadJobForm.cs">
       <SubType>Form</SubType>
@@ -108,7 +107,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tools\ImageUtils.cs" />
     <EmbeddedResource Include="Forms\ImageView.resx">
       <DependentUpon>ImageView.cs</DependentUpon>
     </EmbeddedResource>

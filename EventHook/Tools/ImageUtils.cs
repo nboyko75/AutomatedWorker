@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
-namespace AutomatedWorker.Tools
+namespace EventHook.Tools
 {
     public class ImageUtils
     {

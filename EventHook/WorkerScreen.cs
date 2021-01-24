@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
+using System.Windows.Media.Imaging;
+using EventHook.Tools;
 
 namespace EventHook
 {
@@ -19,13 +21,8 @@ namespace EventHook
 
         public static Bitmap GetScreenBitmap() 
         {
-            Rectangle bounds = Screen.GetBounds(Point.Empty);
-            Bitmap res = new Bitmap(bounds.Width, bounds.Height);
-            using (Graphics g = Graphics.FromImage(res))
-            {
-                g.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
-            }
-            return res;
+            BitmapImage imgSrc = ScreenshotMaker.CaptureScreen(ImageFormat.Bmp);
+            return ImageUtils.BitmapFromSource(imgSrc);
         }
 
         public static Point? Find(Bitmap withinBitmap, Bitmap searchBitmap)

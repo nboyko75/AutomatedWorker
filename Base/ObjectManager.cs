@@ -1,6 +1,6 @@
 ﻿using System;
 using AutomatedWorker.Data;
-using AutomatedWorker.Tools;
+using EventHook.Tools;
 
 namespace AutomatedWorker.Base
 {

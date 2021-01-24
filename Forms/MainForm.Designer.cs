@@ -319,9 +319,10 @@
             this.btnRun.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnRun.Location = new System.Drawing.Point(302, 9);
             this.btnRun.Name = "btnRun";
-            this.btnRun.Size = new System.Drawing.Size(69, 23);
+            this.btnRun.Size = new System.Drawing.Size(53, 23);
             this.btnRun.TabIndex = 17;
             this.btnRun.Text = "Run";
+            this.btnRun.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.btnRun.UseVisualStyleBackColor = true;
             this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
             // 

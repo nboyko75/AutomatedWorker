@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AutomatedWorker.Tools
+namespace EventHook.Tools
 {
     public class NumberUtils
     {
