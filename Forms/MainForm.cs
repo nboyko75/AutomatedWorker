@@ -24,6 +24,7 @@ namespace AutomatedWorker.Forms
 
         private readonly MouseWatcher mouseWatcher;
         private Mouse.MousePoint mousePoint;
+        private ScreenshotMaker screenshotMaker;
 
         // private readonly PrintWatcher printWatcher;
         private Config config;
@@ -53,6 +54,7 @@ namespace AutomatedWorker.Forms
             applicationWatcher.OnApplicationWindowChange += OnApplicationWindowChange;
             /* printWatcher.OnPrintEvent += OnPrintEvent;
             }; */
+            screenshotMaker = new ScreenshotMaker();
 
             config = new Config();
             jobManager = new JobManager();
@@ -78,7 +80,7 @@ namespace AutomatedWorker.Forms
         private void btnNew_Click(object sender, EventArgs e)
         {
             // this.WindowState = FormWindowState.Minimized;
-            BitmapSource bt = ScreenshotMaker.BeginSelectionImageFromScreen();
+            BitmapSource bt = screenshotMaker.BeginSelectionImageFromScreen();
             if (bt == null) 
             {
                 return;
@@ -87,7 +89,7 @@ namespace AutomatedWorker.Forms
             string imageSrc = $"{config.ImgDir}\\{objName}.bmp";
             ImageUtils.SaveImageToFile(bt, imageSrc);
 
-            System.Windows.Point mousePoint = ScreenshotMaker.MouseClickRelativePoint;
+            System.Windows.Point mousePoint = screenshotMaker.MouseClickRelativePoint;
             ActObject newActObj = new ActObject { Name = objName, ImageSrc = imageSrc };
             AddOperation(newActObj, (int)mousePoint.X, (int)mousePoint.Y);
             // this.WindowState = FormWindowState.Normal;
@@ -114,7 +116,7 @@ namespace AutomatedWorker.Forms
 
         private void AddOperation(ActObject obj) 
         {
-            System.Windows.Point screenShotPoint = ScreenshotMaker.GetCenterPoint();
+            System.Windows.Point screenShotPoint = screenshotMaker.GetCenterPoint();
             AddOperation(obj, (int)screenShotPoint.X, (int)screenShotPoint.Y);
         }
 
@@ -315,6 +317,7 @@ namespace AutomatedWorker.Forms
                 return;
             }
 
+            WindowState = FormWindowState.Minimized;
             CancellationTokenSource source = new CancellationTokenSource();
             CancellationToken token = source.Token;
             Task currentTask = Task.Factory.StartNew(() => runOperation(ops[0], source, ops.Count == 1), token,
@@ -326,6 +329,8 @@ namespace AutomatedWorker.Forms
                 currentTask = currentTask.ContinueWith(t => runOperation(op, source, isLast), token,
                     TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
             }
+            Thread.Sleep(5000);
+            WindowState = FormWindowState.Normal;
         }
 
         private void runOperation(Operation op, CancellationTokenSource source, bool isLast)
@@ -335,15 +340,15 @@ namespace AutomatedWorker.Forms
             {
                 return;
             }
-            // Thread.Sleep(Mouse.WAIT_FOR_CLICK);
             if (isLast)
             {
                 Mouse.MoveTo(1620, 400);
             }
-            else 
+            else
             {
                 System.Drawing.Bitmap img = new System.Drawing.Bitmap(op.Actor.ImageSrc);
-                System.Drawing.Point? imgPoint = WorkerScreen.GetFragmentPoint(img);
+                WorkerScreen screen = new WorkerScreen();
+                System.Drawing.Point? imgPoint = screen.GetFragmentPoint(img);
                 if (!imgPoint.HasValue)
                 {
                     MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -364,6 +369,7 @@ namespace AutomatedWorker.Forms
                     Mouse.Click_Left();
                     break;
             }
+            Thread.Sleep(2000);
             if (isLast) 
             {
                 source.Dispose();

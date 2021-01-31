@@ -1,44 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 using System.Drawing;
 using System.Threading;
+using WindowsInput;
 
 namespace EventHook
 {
     public class Mouse
     {
-        #region private fields
-        [DllImport("user32.dll")]
-        static extern IntPtr GetForegroundWindow();
+        private static InputSimulator simulator = new InputSimulator();
+        private static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
+        private static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
-        static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        static extern bool PostMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int GetWindowThreadProcessId(IntPtr handle, out int processId);
-
-        [DllImport("user32.dll")]
-        private static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-
-        [DllImport("user32.dll", EntryPoint = "SetCursorPos")]
-        private static extern int SetCursorPos(int x, int y);
-
-        // [DllImport("user32.dll", EntryPoint = "keybd_event")]
-        // public static extern void keybd_event(byte bVk, byte bScan, KeyEventFlag dwFlags, int dwExtraInfo);
-
+        #region user consts and structs
         public const int WAIT_FOR_CLICK = 1000;
-
-        private const uint WM_MOUSELEFTDOWN = 0x02;
-        private const uint WM_MOUSELEFTUP = 0x04;
-        private const uint WM_MOUSERIGHTDOWN = 0x08;
-        private const uint WM_MOUSERIGHTUP = 0x10;
-        private const uint WM_MOUSEMOVE = 0x0200;
+        public const int InputMouse = 0;
 
         public struct MousePoint
         {
@@ -50,65 +27,35 @@ namespace EventHook
         #endregion
 
         #region static methods: click
-        private static int MAKELPARAM(int p, int p_2)
-        {
-            return ((p_2 << 16) | (p & 0xFFFF));
-        }
-
-        static public void Click_Left()
+        public static void Click_Left()
         {
             int X = Cursor.Position.X;
             int Y = Cursor.Position.Y;
-            if (ApplicationIsActivated()) 
-            {
-                mouse_event(WM_MOUSELEFTDOWN | WM_MOUSELEFTUP, (uint)X, (uint)Y, 0, 0);
-            }
-            else 
-            {
-                PostMessage(GetForegroundWindow(), WM_MOUSELEFTDOWN | WM_MOUSELEFTUP, (IntPtr)0, (IntPtr)MAKELPARAM(X, Y));
-            }
+            simulator.Mouse.LeftButtonClick();
         }
 
-        static public void Click_Right()
+        public static void Click_Right()
         {
             int X = Cursor.Position.X;
             int Y = Cursor.Position.Y;
-            if (ApplicationIsActivated())
-            {
-                mouse_event(WM_MOUSERIGHTDOWN | WM_MOUSERIGHTUP, (uint)X, (uint)Y, 0, 0);
-            }
-            else
-            {
-                PostMessage(GetForegroundWindow(), WM_MOUSERIGHTDOWN | WM_MOUSERIGHTUP, (IntPtr)0, (IntPtr)MAKELPARAM(X, Y));
-            }
+            simulator.Mouse.RightButtonClick();
         }
 
-        static public void Click_DoubleClick()
+        public static void Click_DoubleClick()
         {
             int X = Cursor.Position.X;
             int Y = Cursor.Position.Y;
-            if (ApplicationIsActivated())
-            {
-                mouse_event(WM_MOUSELEFTDOWN | WM_MOUSELEFTUP, (uint)X, (uint)Y, 0, 0);
-                Thread.Sleep(150);
-                mouse_event(WM_MOUSELEFTDOWN | WM_MOUSELEFTUP, (uint)X, (uint)Y, 0, 0);
-            }
-            else
-            {
-                PostMessage(GetForegroundWindow(), WM_MOUSELEFTDOWN | WM_MOUSELEFTUP, (IntPtr)0, (IntPtr)MAKELPARAM(X, Y));
-                Thread.Sleep(150);
-                PostMessage(GetForegroundWindow(), WM_MOUSELEFTDOWN | WM_MOUSELEFTUP, (IntPtr)0, (IntPtr)MAKELPARAM(X, Y));
-            }
+            simulator.Mouse.LeftButtonDoubleClick();
         }
         #endregion
 
         #region static methods: move
-        static public void MoveTo(Point p)
+        public static void MoveTo(Point p)
         {
             Mouse.moveTo(p, MouseSpeed.Natural);
         }
 
-        static public void MoveTo(Point p, MouseSpeed speed)
+        public static void MoveTo(Point p, MouseSpeed speed)
         {
             switch (speed)
             {
@@ -121,29 +68,20 @@ namespace EventHook
             }
         }
 
-        static public void MoveTo(int x, int y)
+        public static void MoveTo(int x, int y)
         {
             Mouse.MoveTo(new Point(x, y));
         }
 
-        static public void MoveTo(int x, int y, MouseSpeed speed)
+        public static void MoveTo(int x, int y, MouseSpeed speed)
         {
             Mouse.MoveTo(new Point(x, y), speed);
         }
 
         private static void moveTo(Point p)
         {
-            // MessageBox.Show($"Mouse moveTo x = {p.X}, y ={p.Y}");
-            if (ApplicationIsActivated())
-            {
-                SetCursorPos(p.X, p.Y);
-                // Cursor.Position = p;
-            }
-            else 
-            {
-                SendMessage(GetForegroundWindow(), WM_MOUSEMOVE, (IntPtr)0, (IntPtr)MAKELPARAM(p.X, p.Y));
-                // PostMessage(GetForegroundWindow(), WM_MOUSEMOVE, (IntPtr)0, (IntPtr)MAKELPARAM(p.X, p.Y));
-            }
+            Point ap = getAbsoluteCoord(p);
+            simulator.Mouse.MoveMouseTo(ap.X, ap.Y);
         }
 
         private static void moveTo(Point p, MouseSpeed speed)
@@ -195,21 +133,6 @@ namespace EventHook
         #endregion
 
         #region static utils
-        public static bool ApplicationIsActivated()
-        {
-            var activatedHandle = GetForegroundWindow();
-            if (activatedHandle == IntPtr.Zero)
-            {
-                return false; // No window is currently activated
-            }
-
-            var procId = Process.GetCurrentProcess().Id;
-            int activeProcId;
-            GetWindowThreadProcessId(activatedHandle, out activeProcId);
-
-            return activeProcId == procId;
-        }
-
         public static MousePoint GetScreenCenterPoint()
         {
             return new MousePoint { X = Screen.PrimaryScreen.Bounds.Width / 2, Y = Screen.PrimaryScreen.Bounds.Height / 2 };
@@ -230,6 +153,14 @@ namespace EventHook
                 pointY = identY;
             }
             return new MousePoint { X = pointX, Y = pointY };
+        }
+
+        private static Point getAbsoluteCoord(Point p)
+        {
+            Point res = new Point();
+            res.X = (p.X * 65535) / screenWidth;
+            res.Y = (p.Y * 65535) / screenHeight;
+            return res;
         }
         #endregion
     }

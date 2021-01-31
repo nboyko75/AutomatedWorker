@@ -10,84 +10,84 @@ using System.Windows.Input;
 
 namespace EventHook
 {
-    public static class ScreenshotMaker
+    public class ScreenshotMaker
     {
         #region Attributes
         /// <summary>
         /// Окно растягиваемое на экран
         /// </summary>
-        public static Window windowBackground;
+        public Window windowBackground;
         /// <summary>
         /// Первая точка на экране, с которой начинается выделение прямоугольника (Левая верхняя)
         /// </summary>
-        static Point firstPoint;
+        Point firstPoint;
         /// <summary>
         /// Вторая точка на экране, с которой продолжается выделение прямоугольника (Правая нижняя)
         /// </summary>
-        static Point secondPoint;
+        Point secondPoint;
         /// <summary>
         /// Прямоугольник для ручного выделения области для снятия скриншота с части экрана
         /// </summary>
-        static Rectangle rect;
+        Rectangle rect;
         /// <summary>
         /// Прямоугольная область для рисования не затенённой части изображения 
         /// </summary>
-        static Int32Rect rectForDraw;
+        Int32Rect rectForDraw;
         /// <summary>
         /// Канва на которой будут рассчитываться координаты прямоугольника и область для снятия скриншота
         /// </summary>
-        static Canvas canvas;
+        Canvas canvas;
         /// <summary>
         /// Кисть определяющая цвет выделяемого прямоугольника
         /// </summary>
-        public static System.Windows.Media.Brush rectBrush { get; set; }
+        public System.Windows.Media.Brush rectBrush { get; set; }
         /// <summary>
         /// Толщина линий прямоугольника
         /// </summary>
-        static Double rectThickness { get; set; }
+        Double rectThickness { get; set; }
 
-        static TextBlock txtBlock;
+        TextBlock txtBlock;
         /// <summary>
         /// 
         /// </summary>
-        static System.Windows.Controls.Image image;
+        System.Windows.Controls.Image image;
         /// <summary>
         /// Здесь должно содержаться изображение скриншота выделенного участка экрана
         /// </summary>
-        public static BitmapSource bitmapSource;
+        public BitmapSource bitmapSource;
         /// <summary>
         /// Визуальный объект используемый для отрисовки
         /// </summary>
-        static DrawingVisual drawingVisual;
+        DrawingVisual drawingVisual;
         /// <summary>
         /// Описывает визуальное содержимое с использованием команд рисования, проталкивания и выталкивания.
         /// </summary>
-        static DrawingContext drawingContext;
+        DrawingContext drawingContext;
         /// <summary>
         /// То что преобразовывает объект в изображение
         /// </summary>
-        static RenderTargetBitmap renderTargetBitmap;
+        RenderTargetBitmap renderTargetBitmap;
         /// <summary>
         /// Затенённое определённым цветом изображение
         /// </summary>
-        static ImageSource imgSourceShaded;
+        ImageSource imgSourceShaded;
         /// <summary>
         /// Оригинальное изображение
         /// </summary>
-        static BitmapImage bmpImageOriginal;
+        BitmapImage bmpImageOriginal;
         /// <summary>
         /// Кисть для затенения изображения == Brush for shaded image
         /// </summary>
-        static SolidColorBrush solidColorBrush;
+        SolidColorBrush solidColorBrush;
 
-        static int mouseClickCount = 0;
-        public static Point MouseClickPoint { get { return mouseClickPoint; } }
-        public static Point MouseClickRelativePoint { get { return new Point(mouseClickPoint.X - firstPoint.X, mouseClickPoint.Y - firstPoint.Y); } }
-        static Point mouseClickPoint;
+        int mouseClickCount = 0;
+        public Point MouseClickPoint { get { return mouseClickPoint; } }
+        public Point MouseClickRelativePoint { get { return new Point(mouseClickPoint.X - firstPoint.X, mouseClickPoint.Y - firstPoint.Y); } }
+        Point mouseClickPoint;
         #endregion
 
         #region Public methods
-        public static BitmapSource BeginSelectionImageFromScreen()
+        public BitmapSource BeginSelectionImageFromScreen()
         {
             System.Windows.Media.Brush br = new SolidColorBrush(Color.FromRgb(210, 180, 140));
             Double RectThickness = 2;
@@ -103,7 +103,7 @@ namespace EventHook
         /// <param name="rectThickness">Толщина линий прямоугольника</param>
         /// <param name="backBrush">Кисть определяющая цвет заливки фона скриншота</param>
         /// <returns></returns>
-        public static BitmapSource BeginSelectionImageFromScreen(System.Windows.Media.Brush br, Double RectThickness, Color backColor)
+        public BitmapSource BeginSelectionImageFromScreen(System.Windows.Media.Brush br, Double RectThickness, Color backColor)
         {
             InitializeComponents();
             solidColorBrush = new SolidColorBrush(Color.FromArgb(120, backColor.R, backColor.G, backColor.B));
@@ -172,7 +172,7 @@ namespace EventHook
         /// </summary>
         /// <param name="format">Формат в котором вернуть изображение</param>
         /// <returns></returns>
-        public static BitmapImage CaptureScreen(ImageFormat format)
+        public BitmapImage CaptureScreen(ImageFormat format)
         {
             System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new System.Drawing.Point(0, 0),
              new System.Drawing.Size(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width,
@@ -187,7 +187,7 @@ namespace EventHook
         /// <param name="rect">Прямоугольник в котором будет сделан снимок</param>
         /// <param name="format">Формат изображения</param>
         /// <returns></returns>
-        public static BitmapImage CaptureRect(System.Drawing.Rectangle rect, ImageFormat format)
+        public BitmapImage CaptureRect(System.Drawing.Rectangle rect, ImageFormat format)
         {
             using (MemoryStream ms = new MemoryStream())
             {
@@ -196,6 +196,7 @@ namespace EventHook
                 System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bitmap);
                 graphics.CopyFromScreen(rect.X, rect.Y, 0, 0, rect.Size, System.Drawing.CopyPixelOperation.SourceCopy);
                 bitmap.Save(ms, format);
+                // bitmap.Save($"Screenshot_{DateTimeOffset.Now.Minute}_{DateTimeOffset.Now.Second}_{DateTimeOffset.Now.Millisecond}.bmp", format);
                 BitmapImage img = new BitmapImage();
                 img.BeginInit();
                 img.CacheOption = BitmapCacheOption.OnLoad;
@@ -205,7 +206,7 @@ namespace EventHook
             }
         }
 
-        public static Point GetCenterPoint()
+        public Point GetCenterPoint()
         {
             return new Point((firstPoint.X + secondPoint.X) / 2, (firstPoint.Y + secondPoint.Y) / 2);
         }
@@ -215,7 +216,7 @@ namespace EventHook
         /// <summary>
         /// Проинициализировать поля
         /// </summary>
-        private static void InitializeComponents()
+        private void InitializeComponents()
         {
             windowBackground = new Window();
             //windowBackground.Topmost = true;
@@ -229,7 +230,7 @@ namespace EventHook
             rect = new Rectangle();
         }
 
-        private static void CloseWindow()
+        private void CloseWindow()
         {
             windowBackground.Close();
         }
@@ -237,7 +238,7 @@ namespace EventHook
         /// <summary>
         /// Освободить поля
         /// </summary>
-        private static void DisposeComponents()
+        private void DisposeComponents()
         {
             windowBackground = null;
             drawingVisual = null;
@@ -257,7 +258,7 @@ namespace EventHook
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void windowBackground_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        private void windowBackground_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e == null) 
             {
@@ -282,7 +283,7 @@ namespace EventHook
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void windowBackground_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void windowBackground_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             //System.Drawing.Rectangle rectangle = new System.Drawing.Rectangle();
             Int32Rect rectangle = new Int32Rect();
@@ -336,7 +337,7 @@ namespace EventHook
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void windowBackground_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void windowBackground_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
             {
@@ -349,7 +350,7 @@ namespace EventHook
             }
         }
 
-        private static void windowBackground_KeyDown(object sender, KeyEventArgs e) 
+        private void windowBackground_KeyDown(object sender, KeyEventArgs e) 
         {
             if (e.Key == Key.Escape)
             {
@@ -362,7 +363,7 @@ namespace EventHook
         /// Рисует полностью всю картинку, осветвлённую область внутри прямоугольника и затенённую снаружи
         /// </summary>
         /// <param name="rectForDraw">Прямоугольная область для осветлённой картинки</param>
-        private static void DrawLightRegtangle(Int32Rect rectForDraw)
+        private void DrawLightRegtangle(Int32Rect rectForDraw)
         {
             if (rectForDraw.Width > 0 && rectForDraw.Height > 0)
             {
@@ -395,7 +396,7 @@ namespace EventHook
         /// </summary>
         /// <param name="pointLeftTop">Левый верхний угол</param>
         /// <param name="pointRightBottom">Правый нижний угол</param>
-        private static void MoveDrawRectangle(Point pointLeftTop, Point pointRightBottom)
+        private void MoveDrawRectangle(Point pointLeftTop, Point pointRightBottom)
         {
             if (pointLeftTop.X > pointRightBottom.X)
             {
@@ -428,7 +429,7 @@ namespace EventHook
             UpdateInfo(pointLeftTop, pointRightBottom);
         }
 
-        private static void CreateInfo()
+        private void CreateInfo()
         {
             txtBlock = new TextBlock();
             txtBlock.TextWrapping = TextWrapping.Wrap;
@@ -442,7 +443,7 @@ namespace EventHook
         }
 
         // Нужно только для выявления неточностей с координатами прямо во время работы программы
-        private static void UpdateInfo(Point first, Point second)
+        private void UpdateInfo(Point first, Point second)
         {
             txtBlock.Text = "Width: " + rect.Width.ToString() + " " + "Height" + rect.Height.ToString() + " \n"
                 + "pointLeftTop.X: " + first.X.ToString() + " " + "pointLeftTop.Y: " + first.Y.ToString() + " \n"
