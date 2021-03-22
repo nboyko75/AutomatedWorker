@@ -16,6 +16,10 @@ namespace AutomatedWorker.Forms
 {
     public partial class MainForm : Form
     {
+        public const int CHECKIMG_REPEAT_COUNT = 5;
+        public const int CHECKIMG_REPEAT_DELAY = 1000;
+        public const int CLICK_DELAY = 200;
+
         #region Attributes
         private readonly ApplicationWatcher applicationWatcher;
         private readonly EventHookFactory eventHookFactory = new EventHookFactory();
@@ -329,8 +333,7 @@ namespace AutomatedWorker.Forms
                 currentTask = currentTask.ContinueWith(t => runOperation(op, source, isLast), token,
                     TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
             }
-            Thread.Sleep(5000);
-            WindowState = FormWindowState.Normal;
+            // WindowState = FormWindowState.Normal;
         }
 
         private void runOperation(Operation op, CancellationTokenSource source, bool isLast)
@@ -340,23 +343,33 @@ namespace AutomatedWorker.Forms
             {
                 return;
             }
-            if (isLast)
+
+            System.Drawing.Bitmap img = new System.Drawing.Bitmap(op.Actor.ImageSrc);
+            Thread.Sleep(CHECKIMG_REPEAT_DELAY);
+            WorkerScreen screen = new WorkerScreen();
+            System.Drawing.Point? imgPoint = screen.GetFragmentPoint(img);
+            if (!imgPoint.HasValue)
             {
-                Mouse.MoveTo(1620, 400);
-            }
-            else
-            {
-                System.Drawing.Bitmap img = new System.Drawing.Bitmap(op.Actor.ImageSrc);
-                WorkerScreen screen = new WorkerScreen();
-                System.Drawing.Point? imgPoint = screen.GetFragmentPoint(img);
+                int repeatCount = 1;
+                bool toRepeat = true;
+                while (toRepeat)
+                {
+                    Thread.Sleep(CHECKIMG_REPEAT_DELAY);
+                    screen = new WorkerScreen();
+                    imgPoint = screen.GetFragmentPoint(img);
+                    repeatCount++;
+                    toRepeat = !imgPoint.HasValue && repeatCount <= CHECKIMG_REPEAT_COUNT;
+                }
                 if (!imgPoint.HasValue)
                 {
                     MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     source.Cancel();
                     return;
                 }
-                Mouse.MoveTo(imgPoint.Value.X + op.Action.ActPoint.X, imgPoint.Value.Y + op.Action.ActPoint.Y);
             }
+            Mouse.MoveTo(imgPoint.Value.X + op.Action.ActPoint.X, imgPoint.Value.Y + op.Action.ActPoint.Y);
+
+            Thread.Sleep(CLICK_DELAY);
             switch (op.Action.ClickType)
             {
                 case MouseClickType.LEFTCLICK:
@@ -369,7 +382,6 @@ namespace AutomatedWorker.Forms
                     Mouse.Click_Left();
                     break;
             }
-            Thread.Sleep(2000);
             if (isLast) 
             {
                 source.Dispose();

@@ -7,6 +7,7 @@ using System.Windows.Shapes;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Input;
+using EventHook.Tools;
 
 namespace EventHook
 {
@@ -28,7 +29,7 @@ namespace EventHook
         /// <summary>
         /// Прямоугольник для ручного выделения области для снятия скриншота с части экрана
         /// </summary>
-        Rectangle rect;
+        Rectangle selectedRect;
         /// <summary>
         /// Прямоугольная область для рисования не затенённой части изображения 
         /// </summary>
@@ -48,9 +49,9 @@ namespace EventHook
 
         TextBlock txtBlock;
         /// <summary>
-        /// 
+        /// Здесь должно содержаться изображение скриншота экрана
         /// </summary>
-        System.Windows.Controls.Image image;
+        public BitmapSource screenSource;
         /// <summary>
         /// Здесь должно содержаться изображение скриншота выделенного участка экрана
         /// </summary>
@@ -111,7 +112,9 @@ namespace EventHook
             rectBrush = br;
             rectThickness = RectThickness;
 
-            bmpImageOriginal = CaptureScreen(ImageFormat.Bmp);
+            screenSource = CaptureScreen(ImageFormat.Bmp);
+            // bmpImageOriginal = ImageUtils.BitmapImageFromSource(screenSource);
+            bmpImageOriginal = CaptureImageRect(ImageFormat.Bmp);
 
             imgSourceShaded = bmpImageOriginal;
             Rect imgRect = new Rect(new Point(0, 0), new Point(bmpImageOriginal.Width, bmpImageOriginal.Height));
@@ -121,13 +124,10 @@ namespace EventHook
             drawingContext.Close();
 
             renderTargetBitmap = new RenderTargetBitmap((int)bmpImageOriginal.Width, (int)bmpImageOriginal.Height, 96, 96,
-             System.Windows.Media.PixelFormats.Pbgra32);
+                System.Windows.Media.PixelFormats.Pbgra32);
             renderTargetBitmap.Render(drawingVisual);
 
             imgSourceShaded = renderTargetBitmap;
-
-            image = new System.Windows.Controls.Image();
-            image.Source = bmpImageOriginal;
 
             ImageBrush imgBrush = new ImageBrush();
             imgBrush.AlignmentX = AlignmentX.Left;
@@ -153,14 +153,14 @@ namespace EventHook
             windowBackground.MouseLeftButtonUp += new System.Windows.Input.MouseButtonEventHandler(windowBackground_MouseLeftButtonUp);
             windowBackground.KeyDown += new System.Windows.Input.KeyEventHandler(windowBackground_KeyDown);
 
-            rect.Stroke = br as System.Windows.Media.Brush;
-            rect.StrokeThickness = RectThickness;
-            rect.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
-            rect.VerticalAlignment = System.Windows.VerticalAlignment.Top;
+            selectedRect.Stroke = br;
+            selectedRect.StrokeThickness = RectThickness;
+            selectedRect.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+            selectedRect.VerticalAlignment = System.Windows.VerticalAlignment.Top;
 
-            Canvas.SetTop(rect, firstPoint.Y);
-            Canvas.SetLeft(rect, firstPoint.X);
-            canvas.Children.Add(rect);
+            Canvas.SetTop(selectedRect, firstPoint.Y);
+            Canvas.SetLeft(selectedRect, firstPoint.X);
+            canvas.Children.Add(selectedRect);
 
             windowBackground.ShowDialog();
             DisposeComponents();
@@ -172,12 +172,9 @@ namespace EventHook
         /// </summary>
         /// <param name="format">Формат в котором вернуть изображение</param>
         /// <returns></returns>
-        public BitmapImage CaptureScreen(ImageFormat format)
+        public BitmapSource CaptureScreen(ImageFormat format)
         {
-            System.Drawing.Rectangle rect = new System.Drawing.Rectangle(new System.Drawing.Point(0, 0),
-             new System.Drawing.Size(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width,
-              System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height));
-
+            System.Drawing.Rectangle rect = GetScreenRect();
             return CaptureRect(rect, format);
         }
 
@@ -187,16 +184,30 @@ namespace EventHook
         /// <param name="rect">Прямоугольник в котором будет сделан снимок</param>
         /// <param name="format">Формат изображения</param>
         /// <returns></returns>
-        public BitmapImage CaptureRect(System.Drawing.Rectangle rect, ImageFormat format)
+        public BitmapSource CaptureRect(System.Drawing.Rectangle rect, ImageFormat format)
+        {
+            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(rect.Width, rect.Height,
+                System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bitmap);
+            graphics.CopyFromScreen(rect.X, rect.Y, 0, 0, rect.Size, System.Drawing.CopyPixelOperation.SourceCopy);
+            
+            return ImageUtils.SourceFromBitmap(bitmap);
+        }
+
+        public BitmapImage CaptureImageRect(ImageFormat format) 
+        {
+            System.Drawing.Rectangle rect = GetScreenRect();
+            return CaptureImageRect(rect, format);
+        }
+
+        public BitmapImage CaptureImageRect(System.Drawing.Rectangle rect, ImageFormat format)
         {
             using (MemoryStream ms = new MemoryStream())
             {
-                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(rect.Width, rect.Height,
-                    System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
                 System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bitmap);
                 graphics.CopyFromScreen(rect.X, rect.Y, 0, 0, rect.Size, System.Drawing.CopyPixelOperation.SourceCopy);
                 bitmap.Save(ms, format);
-                // bitmap.Save($"Screenshot_{DateTimeOffset.Now.Minute}_{DateTimeOffset.Now.Second}_{DateTimeOffset.Now.Millisecond}.bmp", format);
                 BitmapImage img = new BitmapImage();
                 img.BeginInit();
                 img.CacheOption = BitmapCacheOption.OnLoad;
@@ -204,6 +215,20 @@ namespace EventHook
                 img.EndInit();
                 return img;
             }
+        }
+
+        public System.Drawing.Bitmap GetBitmapRect(ImageFormat format)
+        {
+            System.Drawing.Rectangle rect = GetScreenRect();
+            return GetBitmapRect(rect, format);
+        }
+
+        public System.Drawing.Bitmap GetBitmapRect(System.Drawing.Rectangle rect, ImageFormat format)
+        {
+            System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(rect.Width, rect.Height, System.Drawing.Imaging.PixelFormat.Format32bppRgb);
+            System.Drawing.Graphics graphics = System.Drawing.Graphics.FromImage(bitmap);
+            graphics.CopyFromScreen(rect.X, rect.Y, 0, 0, rect.Size, System.Drawing.CopyPixelOperation.SourceCopy);
+            return bitmap;
         }
 
         public Point GetCenterPoint()
@@ -227,7 +252,7 @@ namespace EventHook
             rectForDraw = new Int32Rect();
             drawingVisual = new DrawingVisual();
             imgSourceShaded = new BitmapImage();
-            rect = new Rectangle();
+            selectedRect = new Rectangle();
         }
 
         private void CloseWindow()
@@ -240,14 +265,16 @@ namespace EventHook
         /// </summary>
         private void DisposeComponents()
         {
+            screenSource = null;
+            // bitmapSource - повинен бути доступним для MainForm
+            // bitmapSource = null;
             windowBackground = null;
             drawingVisual = null;
             drawingContext = null;
             renderTargetBitmap = null;
             imgSourceShaded = null;
             bmpImageOriginal = null;
-            rect = null;
-            image = null;
+            selectedRect = null;
             canvas = null;
             solidColorBrush = null;
             mouseClickCount = 0;
@@ -290,8 +317,8 @@ namespace EventHook
 
             if (firstPoint.X > secondPoint.X)
             {
-                rectangle.X = (int)(secondPoint.X + rect.StrokeThickness);
-                rectangle.Width = (int)(firstPoint.X - secondPoint.X - rect.StrokeThickness * 2);
+                rectangle.X = (int)(secondPoint.X + selectedRect.StrokeThickness);
+                rectangle.Width = (int)(firstPoint.X - secondPoint.X - selectedRect.StrokeThickness * 2);
                 if (rectangle.Width < 1)
                 {
                     rectangle.Width = 1;
@@ -299,8 +326,8 @@ namespace EventHook
             }
             else
             {
-                rectangle.X = (int)(firstPoint.X + rect.StrokeThickness);
-                rectangle.Width = (int)(secondPoint.X - firstPoint.X - rect.StrokeThickness * 2);
+                rectangle.X = (int)(firstPoint.X + selectedRect.StrokeThickness);
+                rectangle.Width = (int)(secondPoint.X - firstPoint.X - selectedRect.StrokeThickness * 2);
                 if (rectangle.Width < 1)
                 {
                     rectangle.Width = 1;
@@ -309,8 +336,8 @@ namespace EventHook
 
             if (firstPoint.Y > secondPoint.Y)
             {
-                rectangle.Y = (int)(secondPoint.Y + rect.StrokeThickness);
-                rectangle.Height = (int)(firstPoint.Y - secondPoint.Y - rect.StrokeThickness * 2);
+                rectangle.Y = (int)(secondPoint.Y + selectedRect.StrokeThickness);
+                rectangle.Height = (int)(firstPoint.Y - secondPoint.Y - selectedRect.StrokeThickness * 2);
                 if (rectangle.Height < 1)
                 {
                     rectangle.Height = 1;
@@ -318,15 +345,15 @@ namespace EventHook
             }
             else
             {
-                rectangle.Y = (int)(firstPoint.Y + rect.StrokeThickness);
-                rectangle.Height = (int)(secondPoint.Y - firstPoint.Y - rect.StrokeThickness * 2);
+                rectangle.Y = (int)(firstPoint.Y + selectedRect.StrokeThickness);
+                rectangle.Height = (int)(secondPoint.Y - firstPoint.Y - selectedRect.StrokeThickness * 2);
                 if (rectangle.Height < 1)
                 {
                     rectangle.Height = 1;
                 }
             }
 
-            CroppedBitmap cb = new CroppedBitmap((BitmapSource)image.Source, rectangle);
+            CroppedBitmap cb = new CroppedBitmap(screenSource, rectangle);
             bitmapSource = cb;
 
             // CloseWindow();
@@ -371,7 +398,7 @@ namespace EventHook
                 drawingContext = drawingVisual.RenderOpen();
                 drawingContext.DrawImage(imgSourceShaded, imgRect);
 
-                CroppedBitmap cb = new CroppedBitmap((BitmapSource)image.Source, rectForDraw);
+                CroppedBitmap cb = new CroppedBitmap(screenSource, rectForDraw);
                 Rect rectForLosso = new Rect((double)rectForDraw.X, (double)rectForDraw.Y,
                  (double)rectForDraw.Width, (double)rectForDraw.Height);
                 drawingContext.DrawRectangle(solidColorBrush, null, rectForLosso);
@@ -400,33 +427,40 @@ namespace EventHook
         {
             if (pointLeftTop.X > pointRightBottom.X)
             {
-                Canvas.SetLeft(rect, pointRightBottom.X);
-                rect.Width = pointLeftTop.X - pointRightBottom.X;
+                Canvas.SetLeft(selectedRect, pointRightBottom.X);
+                selectedRect.Width = pointLeftTop.X - pointRightBottom.X;
                 rectForDraw.X = (int)pointRightBottom.X;
             }
             else
             {
-                Canvas.SetLeft(rect, pointLeftTop.X);
-                rect.Width = pointRightBottom.X - pointLeftTop.X;
+                Canvas.SetLeft(selectedRect, pointLeftTop.X);
+                selectedRect.Width = pointRightBottom.X - pointLeftTop.X;
                 rectForDraw.X = (int)pointLeftTop.X;
             }
 
             if (pointLeftTop.Y > pointRightBottom.Y)
             {
-                Canvas.SetTop(rect, pointRightBottom.Y);
-                rect.Height = pointLeftTop.Y - pointRightBottom.Y;
+                Canvas.SetTop(selectedRect, pointRightBottom.Y);
+                selectedRect.Height = pointLeftTop.Y - pointRightBottom.Y;
                 rectForDraw.Y = (int)pointRightBottom.Y;
             }
             else
             {
-                Canvas.SetTop(rect, pointLeftTop.Y);
-                rect.Height = pointRightBottom.Y - pointLeftTop.Y;
+                Canvas.SetTop(selectedRect, pointLeftTop.Y);
+                selectedRect.Height = pointRightBottom.Y - pointLeftTop.Y;
                 rectForDraw.Y = (int)pointLeftTop.Y;
             }
-            rectForDraw.Width = (int)rect.Width;
-            rectForDraw.Height = (int)rect.Height;
+            rectForDraw.Width = (int)selectedRect.Width;
+            rectForDraw.Height = (int)selectedRect.Height;
             DrawLightRegtangle(rectForDraw);
             UpdateInfo(pointLeftTop, pointRightBottom);
+        }
+
+        private System.Drawing.Rectangle GetScreenRect()
+        {
+            return new System.Drawing.Rectangle(new System.Drawing.Point(0, 0),
+                new System.Drawing.Size(System.Windows.Forms.Screen.PrimaryScreen.Bounds.Width,
+                System.Windows.Forms.Screen.PrimaryScreen.Bounds.Height));
         }
 
         private void CreateInfo()
@@ -445,7 +479,7 @@ namespace EventHook
         // Нужно только для выявления неточностей с координатами прямо во время работы программы
         private void UpdateInfo(Point first, Point second)
         {
-            txtBlock.Text = "Width: " + rect.Width.ToString() + " " + "Height" + rect.Height.ToString() + " \n"
+            txtBlock.Text = "Width: " + selectedRect.Width.ToString() + " " + "Height" + selectedRect.Height.ToString() + " \n"
                 + "pointLeftTop.X: " + first.X.ToString() + " " + "pointLeftTop.Y: " + first.Y.ToString() + " \n"
                 + "pointRightBottom.X: " + second.X.ToString() + " " + "pointRightBottom.Y: " + second.Y.ToString();
         }

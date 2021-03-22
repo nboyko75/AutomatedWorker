@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using JsonFlatFileDataStore;
 
 namespace EventHook.Tools
 {
@@ -18,6 +20,12 @@ namespace EventHook.Tools
             }
         }
 
+        public static void SaveImageToFile(Bitmap image, string filePath)
+        {
+            BitmapSource imageSrc = SourceFromBitmap(image);
+            SaveImageToFile(imageSrc, filePath);
+        }
+
         public static Byte[] LoadImageFromFile(string filePath)
         {
             Bitmap img = new Bitmap(filePath);
@@ -30,7 +38,7 @@ namespace EventHook.Tools
             return res;
         }
 
-        public static BitmapSource ConvertBitmap(Bitmap source)
+        public static BitmapSource SourceFromBitmap(Bitmap source)
         {
             return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(source.GetHbitmap(),
                 IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
@@ -83,6 +91,46 @@ namespace EventHook.Tools
                 result = new Bitmap(Image.FromStream(ms));
             }
             return result;
+        }
+
+        public static BitmapImage BitmapImageFromSource(BitmapSource bitmapsource)
+        {
+            BitmapImage img = new BitmapImage();
+            MemoryStream ms = new MemoryStream();
+            BitmapEncoder enc = new BmpBitmapEncoder();
+
+            enc.Frames.Add(BitmapFrame.Create(bitmapsource));
+            enc.Save(ms);
+
+            img.BeginInit();
+            img.StreamSource = ms;
+            img.EndInit();
+
+            ms.Close();
+            return img;
+        }
+
+        public static int[][] GetPixelArray(Bitmap bitmap)
+        {
+            var result = new int[bitmap.Height][];
+            var bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+
+            for (int y = 0; y < bitmap.Height; ++y)
+            {
+                result[y] = new int[bitmap.Width];
+                System.Runtime.InteropServices.Marshal.Copy(bitmapData.Scan0 + y * bitmapData.Stride, result[y], 0, result[y].Length);
+            }
+
+            bitmap.UnlockBits(bitmapData);
+
+            return result;
+        }
+
+        public static void SavePixelArrayToFile(Bitmap bitmap, string filePath)
+        {
+            int[][] array = GetPixelArray(bitmap);
+            string json = JsonUtils.GetJsonOfObject(array);
+            File.WriteAllText($"{filePath}.json", json);
         }
     }
 }

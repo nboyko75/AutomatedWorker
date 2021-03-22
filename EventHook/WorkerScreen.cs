@@ -26,8 +26,14 @@ namespace EventHook
 
         public Bitmap GetScreenBitmap() 
         {
-            BitmapImage imgSrc = screenshotMaker.CaptureScreen(ImageFormat.Bmp);
-            return ImageUtils.BitmapFromSource(imgSrc);
+            return screenshotMaker.GetBitmapRect(ImageFormat.Bmp);
+        }
+
+        public void SaveScreenBitmapToFile(string filePath)
+        {
+            Bitmap screenBmp = GetScreenBitmap();
+            BitmapSource screenSrc = ImageUtils.SourceFromBitmap(screenBmp);
+            ImageUtils.SaveImageToFile(screenSrc, filePath);
         }
 
         public Point? Find(Bitmap withinBitmap, Bitmap searchBitmap)
@@ -41,8 +47,8 @@ namespace EventHook
                 return null;
             }
 
-            int[][] withinArray = GetPixelArray(withinBitmap);
-            int[][] searchArray = GetPixelArray(searchBitmap);
+            int[][] withinArray = ImageUtils.GetPixelArray(withinBitmap);
+            int[][] searchArray = ImageUtils.GetPixelArray(searchBitmap);
 
             foreach (var firstLineMatchPoint in FindMatch(withinArray.Take(withinBitmap.Height - searchBitmap.Height), searchArray[0]))
             {
