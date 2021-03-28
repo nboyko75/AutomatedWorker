@@ -29,6 +29,7 @@ namespace AutomatedWorker.Forms
         private readonly MouseWatcher mouseWatcher;
         private Mouse.MousePoint mousePoint;
         private ScreenshotMaker screenshotMaker;
+        private Mouse mouse;
 
         // private readonly PrintWatcher printWatcher;
         private Config config;
@@ -59,11 +60,12 @@ namespace AutomatedWorker.Forms
             /* printWatcher.OnPrintEvent += OnPrintEvent;
             }; */
             screenshotMaker = new ScreenshotMaker();
+            mouse = new Mouse();
 
             config = new Config();
             jobManager = new JobManager();
             objectManager = new ObjectManager();
-            mousePoint = Mouse.GetScreenCenterPoint();
+            mousePoint = mouse.GetScreenCenterPoint();
 
             resManager = new ResourceManager("AutomatedWorker.Properties.Resources", typeof(Resources).Assembly);
         }
@@ -109,7 +111,7 @@ namespace AutomatedWorker.Forms
             {
                 objectForm.FillObjects();
             }
-            Mouse.MousePoint formLocation = Mouse.GetAppropriatedFormPoint(mousePoint, objectForm.Size.Width, objectForm.Size.Height);
+            Mouse.MousePoint formLocation = mouse.GetAppropriatedFormPoint(mousePoint, objectForm.Size.Width, objectForm.Size.Height);
             objectForm.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
             objectForm.ShowDialog(this);
             if (objectForm.DialogResult == DialogResult.OK)
@@ -223,7 +225,7 @@ namespace AutomatedWorker.Forms
                     {
                         ImageView imageView = new ImageView();
                         imageView.LoadImage(op.Actor.ImageSrc);
-                        Mouse.MousePoint formLocation = Mouse.GetAppropriatedFormPoint(mousePoint, imageView.Size.Width, imageView.Size.Height);
+                        Mouse.MousePoint formLocation = mouse.GetAppropriatedFormPoint(mousePoint, imageView.Size.Width, imageView.Size.Height);
                         imageView.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
                         imageView.Show();
                     }
@@ -237,7 +239,7 @@ namespace AutomatedWorker.Forms
             {
                 jobForm = new LoadJobForm(jobManager);
             }
-            Mouse.MousePoint formLocation = Mouse.GetAppropriatedFormPoint(mousePoint, jobForm.Size.Width, jobForm.Size.Height);
+            Mouse.MousePoint formLocation = mouse.GetAppropriatedFormPoint(mousePoint, jobForm.Size.Width, jobForm.Size.Height);
             jobForm.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
             jobForm.ShowDialog(this);
             if (jobForm.DialogResult == DialogResult.OK) 
@@ -322,7 +324,16 @@ namespace AutomatedWorker.Forms
             }
 
             WindowState = FormWindowState.Minimized;
+            /* All events loops in the main thread */
             CancellationTokenSource source = new CancellationTokenSource();
+            for (int i = 0; i < ops.Count; i++)
+            {
+                Operation op = ops[i];
+                bool isLast = i == ops.Count - 1;
+                runOperation(op, source, isLast);
+            }
+            /* All events loops in seperated threads */
+            /* CancellationTokenSource source = new CancellationTokenSource();
             CancellationToken token = source.Token;
             Task currentTask = Task.Factory.StartNew(() => runOperation(ops[0], source, ops.Count == 1), token,
                 TaskCreationOptions.None, TaskScheduler.Default);
@@ -332,7 +343,7 @@ namespace AutomatedWorker.Forms
                 bool isLast = i == ops.Count - 1;
                 currentTask = currentTask.ContinueWith(t => runOperation(op, source, isLast), token,
                     TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
-            }
+            } */
             // WindowState = FormWindowState.Normal;
         }
 
@@ -362,29 +373,46 @@ namespace AutomatedWorker.Forms
                 }
                 if (!imgPoint.HasValue)
                 {
+                    // testMouseMove(100, 100);
                     MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     source.Cancel();
                     return;
                 }
             }
-            Mouse.MoveTo(imgPoint.Value.X + op.Action.ActPoint.X, imgPoint.Value.Y + op.Action.ActPoint.Y);
+            mouse.MoveTo(imgPoint.Value.X + op.Action.ActPoint.X, imgPoint.Value.Y + op.Action.ActPoint.Y);
 
             Thread.Sleep(CLICK_DELAY);
             switch (op.Action.ClickType)
             {
                 case MouseClickType.LEFTCLICK:
-                    Mouse.Click_Left();
+                    mouse.Click_Left();
                     break;
                 case MouseClickType.RIGHTCLICK:
-                    Mouse.Click_Left();
+                    mouse.Click_Left();
                     break;
                 case MouseClickType.DOUBLECLICK:
-                    Mouse.Click_Left();
+                    mouse.Click_Left();
                     break;
             }
-            if (isLast) 
+            if (isLast)
             {
                 source.Dispose();
+            }
+        }
+
+        private void testMouseMove(int initialX, int initialY) 
+        {
+            int x = initialX;
+            int y = initialY;
+            int step = 100;
+            int stepCount = 5;
+            while (stepCount > 0) 
+            {
+                mouse.MoveTo(x, y);
+                x += step;
+                y += step;
+                stepCount--;
+                Thread.Sleep(CLICK_DELAY);
             }
         }
     }

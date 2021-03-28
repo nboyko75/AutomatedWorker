@@ -72,6 +72,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\WindowsInput\Native\MOUSEINPUT.cs">
+      <Link>MOUSEINPUT.cs</Link>
+    </Compile>
     <Compile Include="ApplicationWatcher.cs" />
     <Compile Include="ClipboardWatcher.cs" />
     <Compile Include="EventHookFactory.cs" />
@@ -107,6 +110,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Interceptor\Interceptor.csproj">
+      <Project>{c451a00e-77f1-4f3f-b7ee-27dc712ea316}</Project>
+      <Name>Interceptor</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WindowsInput\WindowsInput.csproj">
       <Project>{3549cd6f-80f8-450f-b99e-cf0a736b1f2a}</Project>
       <Name>WindowsInput</Name>

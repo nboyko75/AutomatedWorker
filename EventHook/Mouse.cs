@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Threading;
-using WindowsInput;
+using Interceptor;
 
 namespace EventHook
 {
     public class Mouse
     {
-        private static InputSimulator simulator = new InputSimulator();
+        private Input simulator;
         private static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
         private static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
 
@@ -26,84 +26,80 @@ namespace EventHook
         public enum MouseSpeed { Instant, SuperSlow, Slow, Natural = 3, Fast = 5, SuperFast = 8 };
         #endregion
 
+        public Mouse()
+        {
+            simulator = new Input();
+            simulator.KeyboardFilterMode = KeyboardFilterMode.All;
+            simulator.Load();
+        }
+
         #region static methods: click
-        public static void Click_Left()
+        public void Click_Left()
         {
-            int X = Cursor.Position.X;
-            int Y = Cursor.Position.Y;
-            simulator.Mouse.LeftButtonClick();
+            simulator.SendLeftClick();
         }
 
-        public static void Click_Right()
+        public void Click_Right()
         {
-            int X = Cursor.Position.X;
-            int Y = Cursor.Position.Y;
-            simulator.Mouse.RightButtonClick();
-        }
-
-        public static void Click_DoubleClick()
-        {
-            int X = Cursor.Position.X;
-            int Y = Cursor.Position.Y;
-            simulator.Mouse.LeftButtonDoubleClick();
+            simulator.SendRightClick();
         }
         #endregion
 
         #region static methods: move
-        public static void MoveTo(Point p)
+        public void MoveTo(Point p)
         {
-            Mouse.moveTo(p, MouseSpeed.Natural);
+            moveTo(p, MouseSpeed.Natural);
         }
 
-        public static void MoveTo(Point p, MouseSpeed speed)
+        public void MoveTo(Point p, MouseSpeed speed)
         {
             switch (speed)
             {
                 case MouseSpeed.Instant:
-                    Mouse.MoveTo(p);
+                    MoveTo(p);
                     break;
                 default:
-                    Mouse.moveTo(p, speed);
+                    moveTo(p, speed);
                     break;
             }
         }
 
-        public static void MoveTo(int x, int y)
+        public void MoveTo(int x, int y)
         {
-            Mouse.MoveTo(new Point(x, y));
+            MoveTo(new Point(x, y));
         }
 
-        public static void MoveTo(int x, int y, MouseSpeed speed)
+        public void MoveTo(int x, int y, MouseSpeed speed)
         {
-            Mouse.MoveTo(new Point(x, y), speed);
+            MoveTo(new Point(x, y), speed);
         }
 
-        private static void moveTo(Point p)
+        private void moveTo(Point p)
         {
             Point ap = getAbsoluteCoord(p);
-            simulator.Mouse.MoveMouseTo(ap.X, ap.Y);
+            simulator.MoveMouseTo(ap.X, ap.Y, true);
         }
 
-        private static void moveTo(Point p, MouseSpeed speed)
+        private void moveTo(Point p, MouseSpeed speed)
         {
             List<Point> wayPoints = new List<Point>();
             switch (speed)
             {
                 case MouseSpeed.Instant:
-                    Mouse.moveTo(p);
+                    moveTo(p);
                     return;
                 default:
                     getWayPoints(Cursor.Position, p, ref wayPoints, (int)speed);
                     foreach (Point waypoint in wayPoints)
                     {
-                        Mouse.moveTo(waypoint);
+                        moveTo(waypoint);
                         Thread.Sleep(5);
                     }
                     return;
             }
         }
 
-        private static void getWayPoints(Point from, Point to, ref List<Point> points, int divider)
+        private void getWayPoints(Point from, Point to, ref List<Point> points, int divider)
         {
             lock (points)
             {
@@ -133,12 +129,12 @@ namespace EventHook
         #endregion
 
         #region static utils
-        public static MousePoint GetScreenCenterPoint()
+        public MousePoint GetScreenCenterPoint()
         {
             return new MousePoint { X = Screen.PrimaryScreen.Bounds.Width / 2, Y = Screen.PrimaryScreen.Bounds.Height / 2 };
         }
 
-        public static MousePoint GetAppropriatedFormPoint(MousePoint currentPoint, int formWidth, int formHeight) 
+        public MousePoint GetAppropriatedFormPoint(MousePoint currentPoint, int formWidth, int formHeight) 
         {
             const int identX = 10;
             const int identY = 10;
@@ -155,7 +151,7 @@ namespace EventHook
             return new MousePoint { X = pointX, Y = pointY };
         }
 
-        private static Point getAbsoluteCoord(Point p)
+        private Point getAbsoluteCoord(Point p)
         {
             Point res = new Point();
             res.X = (p.X * 65535) / screenWidth;

@@ -20,7 +20,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile></DocumentationFile>
     <NoWarn>1591;1701;1702;1705</NoWarn>
-    <OutputPath>D:\Projects\CSharp\AutomatedWorker\bin\Debug\</OutputPath>
+    <OutputPath>D:\Projects\AutomatedWorker\bin\Debug\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
