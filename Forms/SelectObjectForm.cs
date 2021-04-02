@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using AutomatedWorker.Base;
-using AutomatedWorker.Data;
+using JobData;
 
 namespace AutomatedWorker.Forms
 {

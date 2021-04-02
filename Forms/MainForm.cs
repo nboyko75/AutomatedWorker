@@ -1,25 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Resources;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
-using System.Threading;
-using System.Threading.Tasks;
-using AutomatedWorker.Base;
-using AutomatedWorker.Data;
-using AutomatedWorker.Properties;
+using JobData;
 using EventHook;
 using EventHook.Tools;
+using JobRunner;
 
 namespace AutomatedWorker.Forms
 {
     public partial class MainForm : Form
     {
-        public const int CHECKIMG_REPEAT_COUNT = 5;
-        public const int CHECKIMG_REPEAT_DELAY = 1000;
-        public const int CLICK_DELAY = 200;
-
         #region Attributes
         private readonly ApplicationWatcher applicationWatcher;
         private readonly EventHookFactory eventHookFactory = new EventHookFactory();
@@ -29,7 +20,7 @@ namespace AutomatedWorker.Forms
         private readonly MouseWatcher mouseWatcher;
         private Mouse.MousePoint mousePoint;
         private ScreenshotMaker screenshotMaker;
-        private Mouse mouse;
+        private Runner runner;
 
         // private readonly PrintWatcher printWatcher;
         private Config config;
@@ -38,8 +29,6 @@ namespace AutomatedWorker.Forms
         private LoadJobForm jobForm;
         private ObjectManager objectManager;
         private SelectObjectForm objectForm;
-
-        private ResourceManager resManager;
         #endregion
 
         public MainForm()
@@ -60,30 +49,61 @@ namespace AutomatedWorker.Forms
             /* printWatcher.OnPrintEvent += OnPrintEvent;
             }; */
             screenshotMaker = new ScreenshotMaker();
-            mouse = new Mouse();
+            runner = new Runner();
 
             config = new Config();
             jobManager = new JobManager();
             objectManager = new ObjectManager();
-            mousePoint = mouse.GetScreenCenterPoint();
-
-            resManager = new ResourceManager("AutomatedWorker.Properties.Resources", typeof(Resources).Assembly);
+            mousePoint = Mouse.GetScreenCenterPoint();
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        #region Events
+        protected void MainForm_Load(object sender, EventArgs e)
         {
             startWatch();
             FillLookups();
             SetDefaultJob();
         }
 
-        private void OnApplicationExit(object sender, EventArgs e)
+        protected void OnApplicationExit(object sender, EventArgs e)
         {
             stopWatch();
             eventHookFactory.Dispose();
         }
 
-        private void btnNew_Click(object sender, EventArgs e)
+        protected void btnLoadJob_Click(object sender, EventArgs e)
+        {
+            if (jobForm == null)
+            {
+                jobForm = new LoadJobForm(jobManager);
+            }
+            Mouse.MousePoint formLocation = Mouse.GetAppropriatedFormPoint(mousePoint, jobForm.Size.Width, jobForm.Size.Height);
+            jobForm.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
+            jobForm.ShowDialog(this);
+            if (jobForm.DialogResult == DialogResult.OK)
+            {
+                if (jobForm.SelectedJob != null)
+                {
+                    job = jobForm.SelectedJob;
+                    loadJob();
+                    txtJobName.Text = job.ObjectName;
+                }
+            }
+        }
+
+        protected void btnSave_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void btnRun_Click(object sender, EventArgs e)
+        {
+            WindowState = FormWindowState.Minimized;
+            runner.Run(job);
+            // WindowState = FormWindowState.Normal;
+        }
+
+        protected void btnNew_Click(object sender, EventArgs e)
         {
             // this.WindowState = FormWindowState.Minimized;
             BitmapSource bt = screenshotMaker.BeginSelectionImageFromScreen();
@@ -101,7 +121,7 @@ namespace AutomatedWorker.Forms
             // this.WindowState = FormWindowState.Normal;
         }
 
-        private void btnAdd_Click(object sender, EventArgs e)
+        protected void btnAdd_Click(object sender, EventArgs e)
         {
             if (objectForm == null)
             {
@@ -111,7 +131,7 @@ namespace AutomatedWorker.Forms
             {
                 objectForm.FillObjects();
             }
-            Mouse.MousePoint formLocation = mouse.GetAppropriatedFormPoint(mousePoint, objectForm.Size.Width, objectForm.Size.Height);
+            Mouse.MousePoint formLocation = Mouse.GetAppropriatedFormPoint(mousePoint, objectForm.Size.Width, objectForm.Size.Height);
             objectForm.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
             objectForm.ShowDialog(this);
             if (objectForm.DialogResult == DialogResult.OK)
@@ -119,7 +139,9 @@ namespace AutomatedWorker.Forms
                 AddOperation(objectForm.SelectedObject);
             }
         }
+        #endregion
 
+        #region Private methods
         private void AddOperation(ActObject obj) 
         {
             System.Windows.Point screenShotPoint = screenshotMaker.GetCenterPoint();
@@ -225,7 +247,7 @@ namespace AutomatedWorker.Forms
                     {
                         ImageView imageView = new ImageView();
                         imageView.LoadImage(op.Actor.ImageSrc);
-                        Mouse.MousePoint formLocation = mouse.GetAppropriatedFormPoint(mousePoint, imageView.Size.Width, imageView.Size.Height);
+                        Mouse.MousePoint formLocation = Mouse.GetAppropriatedFormPoint(mousePoint, imageView.Size.Width, imageView.Size.Height);
                         imageView.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
                         imageView.Show();
                     }
@@ -233,28 +255,13 @@ namespace AutomatedWorker.Forms
             }
         }
 
-        private void btnLoadJob_Click(object sender, EventArgs e)
-        {
-            if (jobForm == null) 
-            {
-                jobForm = new LoadJobForm(jobManager);
-            }
-            Mouse.MousePoint formLocation = mouse.GetAppropriatedFormPoint(mousePoint, jobForm.Size.Width, jobForm.Size.Height);
-            jobForm.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
-            jobForm.ShowDialog(this);
-            if (jobForm.DialogResult == DialogResult.OK) 
-            {
-                if (jobForm.SelectedJob != null)
-                {
-                    job = jobForm.SelectedJob;
-                    loadJob();
-                    txtJobName.Text = job.ObjectName;
-                }
-            }
-        }
-
         private void loadJob() 
         {
+            foreach (Operation op in job.GetItems<Operation>()) 
+            {
+                // generate controls
+            }
+
             tblOperations.Rows.Clear();
             foreach (Operation op in job.GetItems<Operation>())
             {
@@ -314,106 +321,6 @@ namespace AutomatedWorker.Forms
             op.Action.ClickType = (MouseClickType)(row["ClickTypeId"] != DBNull.Value ? (int)row["ClickTypeId"] : (int)Config.DEFMOUSE_CLICKTYPE);
             job.Edit<Operation>(op);
         }
-
-        private void btnRun_Click(object sender, EventArgs e)
-        {
-            List<Operation> ops = job.GetItems<Operation>();
-            if (ops.Count == 0) 
-            {
-                return;
-            }
-
-            WindowState = FormWindowState.Minimized;
-            /* All events loops in the main thread */
-            CancellationTokenSource source = new CancellationTokenSource();
-            for (int i = 0; i < ops.Count; i++)
-            {
-                Operation op = ops[i];
-                bool isLast = i == ops.Count - 1;
-                runOperation(op, source, isLast);
-            }
-            /* All events loops in seperated threads */
-            /* CancellationTokenSource source = new CancellationTokenSource();
-            CancellationToken token = source.Token;
-            Task currentTask = Task.Factory.StartNew(() => runOperation(ops[0], source, ops.Count == 1), token,
-                TaskCreationOptions.None, TaskScheduler.Default);
-            for (int i = 1; i < ops.Count; i++)
-            {
-                Operation op = ops[i];
-                bool isLast = i == ops.Count - 1;
-                currentTask = currentTask.ContinueWith(t => runOperation(op, source, isLast), token,
-                    TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
-            } */
-            // WindowState = FormWindowState.Normal;
-        }
-
-        private void runOperation(Operation op, CancellationTokenSource source, bool isLast)
-        {
-            CancellationToken token = source.Token;
-            if (token.IsCancellationRequested)
-            {
-                return;
-            }
-
-            System.Drawing.Bitmap img = new System.Drawing.Bitmap(op.Actor.ImageSrc);
-            Thread.Sleep(CHECKIMG_REPEAT_DELAY);
-            WorkerScreen screen = new WorkerScreen();
-            System.Drawing.Point? imgPoint = screen.GetFragmentPoint(img);
-            if (!imgPoint.HasValue)
-            {
-                int repeatCount = 1;
-                bool toRepeat = true;
-                while (toRepeat)
-                {
-                    Thread.Sleep(CHECKIMG_REPEAT_DELAY);
-                    screen = new WorkerScreen();
-                    imgPoint = screen.GetFragmentPoint(img);
-                    repeatCount++;
-                    toRepeat = !imgPoint.HasValue && repeatCount <= CHECKIMG_REPEAT_COUNT;
-                }
-                if (!imgPoint.HasValue)
-                {
-                    // testMouseMove(100, 100);
-                    MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    source.Cancel();
-                    return;
-                }
-            }
-            mouse.MoveTo(imgPoint.Value.X + op.Action.ActPoint.X, imgPoint.Value.Y + op.Action.ActPoint.Y);
-
-            Thread.Sleep(CLICK_DELAY);
-            switch (op.Action.ClickType)
-            {
-                case MouseClickType.LEFTCLICK:
-                    mouse.Click_Left();
-                    break;
-                case MouseClickType.RIGHTCLICK:
-                    mouse.Click_Left();
-                    break;
-                case MouseClickType.DOUBLECLICK:
-                    mouse.Click_Left();
-                    break;
-            }
-            if (isLast)
-            {
-                source.Dispose();
-            }
-        }
-
-        private void testMouseMove(int initialX, int initialY) 
-        {
-            int x = initialX;
-            int y = initialY;
-            int step = 100;
-            int stepCount = 5;
-            while (stepCount > 0) 
-            {
-                mouse.MoveTo(x, y);
-                x += step;
-                y += step;
-                stepCount--;
-                Thread.Sleep(CLICK_DELAY);
-            }
-        }
+        #endregion
     }
 }

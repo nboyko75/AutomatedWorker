@@ -180,7 +180,7 @@
     /// <summary>
     /// The window event arguments.
     /// </summary>
-    public class WindowEventArgs
+    public class WindowEventArgs: EventArgs
     {
         public WindowEventArgs(IntPtr handle) {
             this.Handle = handle;

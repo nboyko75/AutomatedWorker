@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -12,8 +9,8 @@ namespace Interceptor
     {
         private IntPtr context;
         private Thread callbackThread;
-        const int MOUSEMOVE_DEVICE = 12;
-        const int MOUSECLICK_DEVICE = 11;
+        /* 0-10 Keyboard devices, 11-20 Mouse devices */
+        const int MOUSE_DEVICE = 12;
 
         /// <summary>
         /// Determines whether the driver traps no keyboard events, all events, or a range of events in-between (down only, up only...etc). Set this before loading otherwise the driver will not filter any events and no keypresses can be sent.
@@ -369,7 +366,7 @@ namespace Interceptor
 
             stroke.Mouse = mouseStroke;
 
-            InterceptionDriver.Send(context, MOUSECLICK_DEVICE, ref stroke, 1);
+            InterceptionDriver.Send(context, MOUSE_DEVICE, ref stroke, 1);
         }
 
         public void SendLeftClick()
@@ -415,7 +412,7 @@ namespace Interceptor
                 stroke.Mouse = mouseStroke;
                 stroke.Mouse.Flags = MouseFlags.MoveRelative;
 
-                InterceptionDriver.Send(context, MOUSEMOVE_DEVICE, ref stroke, 1);
+                InterceptionDriver.Send(context, MOUSE_DEVICE, ref stroke, 1);
             }
             else
             {
@@ -440,7 +437,7 @@ namespace Interceptor
                 stroke.Mouse = mouseStroke;
                 stroke.Mouse.Flags = MouseFlags.MoveAbsolute;
 
-                InterceptionDriver.Send(context, MOUSEMOVE_DEVICE, ref stroke, 1);
+                InterceptionDriver.Send(context, MOUSE_DEVICE, ref stroke, 1);
             }
             {
                 Cursor.Position = new Point(x, y);

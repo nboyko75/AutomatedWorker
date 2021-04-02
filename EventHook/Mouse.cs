@@ -129,12 +129,12 @@ namespace EventHook
         #endregion
 
         #region static utils
-        public MousePoint GetScreenCenterPoint()
+        public static MousePoint GetScreenCenterPoint()
         {
             return new MousePoint { X = Screen.PrimaryScreen.Bounds.Width / 2, Y = Screen.PrimaryScreen.Bounds.Height / 2 };
         }
 
-        public MousePoint GetAppropriatedFormPoint(MousePoint currentPoint, int formWidth, int formHeight) 
+        public static MousePoint GetAppropriatedFormPoint(MousePoint currentPoint, int formWidth, int formHeight) 
         {
             const int identX = 10;
             const int identY = 10;
@@ -151,7 +151,7 @@ namespace EventHook
             return new MousePoint { X = pointX, Y = pointY };
         }
 
-        private Point getAbsoluteCoord(Point p)
+        public static Point getAbsoluteCoord(Point p)
         {
             Point res = new Point();
             res.X = (p.X * 65535) / screenWidth;
