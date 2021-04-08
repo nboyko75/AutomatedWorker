@@ -61,7 +61,6 @@ namespace AutomatedWorker.Forms
         protected void MainForm_Load(object sender, EventArgs e)
         {
             startWatch();
-            FillLookups();
             SetDefaultJob();
         }
 
@@ -163,7 +162,7 @@ namespace AutomatedWorker.Forms
 
         private void addRow(Operation op, Byte[] imgData)
         {
-            tblOperations.Rows.Add(op.Id, op.Name, op.Action.ActPoint.X, op.Action.ActPoint.Y, null, imgData, (int)op.Action.ClickType);
+            // tblOperations.Rows.Add(op.Id, op.Name, op.Action.ActPoint.X, op.Action.ActPoint.Y, null, imgData, (int)op.Action.ClickType);
         }
 
         /* Не працює в режимі відладки */
@@ -225,7 +224,7 @@ namespace AutomatedWorker.Forms
 
         private void grdOperations_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (job == null)
+            /* if (job == null)
             {
                 return;
             }
@@ -252,74 +251,14 @@ namespace AutomatedWorker.Forms
                         imageView.Show();
                     }
                     break;
-            }
+            } */
         }
 
         private void loadJob() 
         {
-            foreach (Operation op in job.GetItems<Operation>()) 
-            {
-                // generate controls
-            }
-
-            tblOperations.Rows.Clear();
-            foreach (Operation op in job.GetItems<Operation>())
-            {
-                System.Drawing.Bitmap img = new System.Drawing.Bitmap(op.Actor.ImageSrc);
-                Byte[] imgData = ImageUtils.BitmapToByteArray(img);
-                tblOperations.Rows.Add(op.Id, op.Name, op.Action.ActPoint.X, op.Action.ActPoint.Y, op.Action.KeyboardText, imgData, (int)op.Action.ClickType);
-            }
-        }
-
-        private void grdOperations_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            /*if (job == null)
-            {
-                return;
-            }
-            int id = e.RowIndex + 1;
-            Operation op = job.GetItem<Operation>(id);
-            DataGridViewColumn viewCol = grdOperations.Columns[e.ColumnIndex];
-            DataRow row = tblOperations.Rows[e.RowIndex];
-            switch (viewCol.Name) 
-            {
-                case "clId":
-                    op.Id = (int)row["Id"];
-                    break;
-                case "clName":
-                    op.Name = (row["Name"] != null) ? (string)row["Name"] : null;
-                    break;
-                case "clMouseX":
-                case "clMouseY":
-                    op.Action.ActPoint = new Mouse.MousePoint { X = (int)row["MouseX"], Y = (int)row["MouseY"] };
-                    break;
-                case "clKeyboardText":
-                    op.Action.KeyboardText = (row["KeyboardText"] != null) ? (string)row["KeyboardText"] : null;
-                    break;
-                case "clClickTypeId":
-                    op.Action.ClickType = (MouseClickType)((int)row["ClickTypeId"]);
-                    break;
-            }
-            job.Edit<Operation>(op); */
-        }
-
-        private void FillLookups() 
-        {
-            tblMouseClickType.Rows.Add(new object[] { 1, "LeftClick", "Left click" });
-            tblMouseClickType.Rows.Add(new object[] { 2, "RightClick", "Right click" });
-            tblMouseClickType.Rows.Add(new object[] { 3, "DoubleClick", "Double click" });
-        }
-
-        private void tblOperations_RowChanged(object sender, DataRowChangeEventArgs e)
-        {
-            DataRow row = e.Row;
-            int id = (int)row["Id"];
-            Operation op = job.GetItem<Operation>(id);
-            op.Name = (row["Name"] != DBNull.Value) ? (string)row["Name"] : "-";
-            op.Action.ActPoint = new Mouse.MousePoint { X = (int)row["MouseX"], Y = (int)row["MouseY"] };
-            op.Action.KeyboardText = (row["KeyboardText"] != DBNull.Value) ? (string)row["KeyboardText"] : null;
-            op.Action.ClickType = (MouseClickType)(row["ClickTypeId"] != DBNull.Value ? (int)row["ClickTypeId"] : (int)Config.DEFMOUSE_CLICKTYPE);
-            job.Edit<Operation>(op);
+            job.Load();
+            pnlOperations.Controls.Clear();
+            pnlOperations.Controls.AddRange(job.Panels.ToArray());
         }
         #endregion
     }

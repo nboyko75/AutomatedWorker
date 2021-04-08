@@ -144,11 +144,4 @@ namespace JobData
         public ActObject Actor { get; set; }
         public Act Action { get; set; }
     }
-
-    public class Job : StoreObject
-    {
-        public Job(string ObjectName, string DataDir) : base(ObjectName, DataDir)
-        {
-        }
-    }
 }
