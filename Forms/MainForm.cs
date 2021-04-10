@@ -92,7 +92,7 @@ namespace AutomatedWorker.Forms
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-
+            job.Save();
         }
 
         protected void btnRun_Click(object sender, EventArgs e)
@@ -147,22 +147,10 @@ namespace AutomatedWorker.Forms
             AddOperation(obj, (int)screenShotPoint.X, (int)screenShotPoint.Y);
         }
 
-        private void AddOperation(ActObject obj, int x, int y) 
+        private void AddOperation(ActObject obj, int x, int y)
         {
             objectManager.Add(obj);
-
-            Act newAct = new Act { ActPoint = new Mouse.MousePoint { X = x, Y = y }, ClickType = Config.DEFMOUSE_CLICKTYPE };
-            int newActId = job.GetCount<Operation>() + 1;
-            Operation newOp = new Operation { Id = newActId, Actor = obj, Action = newAct };
-            job.Add<Operation>(newOp);
-
-            Byte[] imgData = ImageUtils.LoadImageFromFile(obj.ImageSrc);
-            addRow(newOp, imgData);
-        }
-
-        private void addRow(Operation op, Byte[] imgData)
-        {
-            // tblOperations.Rows.Add(op.Id, op.Name, op.Action.ActPoint.X, op.Action.ActPoint.Y, null, imgData, (int)op.Action.ClickType);
+            job.Add(obj, x, y);
         }
 
         /* Не працює в режимі відладки */

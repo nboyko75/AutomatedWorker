@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace AutomatedWorker.Forms
+namespace JobData.Forms
 {
     public partial class ImageView : Form
     {
