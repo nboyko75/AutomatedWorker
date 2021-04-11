@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectObjectForm));
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
             this.lblObject = new System.Windows.Forms.Label();
@@ -85,6 +86,7 @@
             this.cmbObject.Name = "cmbObject";
             this.cmbObject.Size = new System.Drawing.Size(311, 21);
             this.cmbObject.TabIndex = 5;
+            this.cmbObject.SelectedIndexChanged += new System.EventHandler(this.cmbObject_SelectedIndexChanged);
             // 
             // SelectObjectForm
             // 
@@ -96,8 +98,10 @@
             this.Controls.Add(this.lblObject);
             this.Controls.Add(this.lblSelectObject);
             this.Controls.Add(this.cmbObject);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "SelectObjectForm";
             this.Text = "Select fragment form";
+            this.Shown += new System.EventHandler(this.SelectObjectForm_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -45,6 +45,7 @@
             this.tbMain = new System.Windows.Forms.ToolStrip();
             this.btnLoad = new System.Windows.Forms.ToolStripButton();
             this.btnSave = new System.Windows.Forms.ToolStripButton();
+            this.btnClear = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnRun = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
@@ -119,7 +120,7 @@
             // lblKeyboardText
             // 
             this.lblKeyboardText.AutoSize = true;
-            this.lblKeyboardText.Location = new System.Drawing.Point(543, 11);
+            this.lblKeyboardText.Location = new System.Drawing.Point(565, 11);
             this.lblKeyboardText.Name = "lblKeyboardText";
             this.lblKeyboardText.Size = new System.Drawing.Size(72, 13);
             this.lblKeyboardText.TabIndex = 13;
@@ -128,7 +129,7 @@
             // lblClickType
             // 
             this.lblClickType.AutoSize = true;
-            this.lblClickType.Location = new System.Drawing.Point(390, 11);
+            this.lblClickType.Location = new System.Drawing.Point(418, 11);
             this.lblClickType.Name = "lblClickType";
             this.lblClickType.Size = new System.Drawing.Size(53, 13);
             this.lblClickType.TabIndex = 12;
@@ -137,7 +138,7 @@
             // lblMouseY
             // 
             this.lblMouseY.AutoSize = true;
-            this.lblMouseY.Location = new System.Drawing.Point(299, 17);
+            this.lblMouseY.Location = new System.Drawing.Point(340, 17);
             this.lblMouseY.Name = "lblMouseY";
             this.lblMouseY.Size = new System.Drawing.Size(14, 13);
             this.lblMouseY.TabIndex = 11;
@@ -146,7 +147,7 @@
             // lblMouseX
             // 
             this.lblMouseX.AutoSize = true;
-            this.lblMouseX.Location = new System.Drawing.Point(253, 17);
+            this.lblMouseX.Location = new System.Drawing.Point(287, 17);
             this.lblMouseX.Name = "lblMouseX";
             this.lblMouseX.Size = new System.Drawing.Size(14, 13);
             this.lblMouseX.TabIndex = 10;
@@ -155,7 +156,7 @@
             // lblMouseCaption
             // 
             this.lblMouseCaption.AutoSize = true;
-            this.lblMouseCaption.Location = new System.Drawing.Point(242, 0);
+            this.lblMouseCaption.Location = new System.Drawing.Point(278, 0);
             this.lblMouseCaption.Name = "lblMouseCaption";
             this.lblMouseCaption.Size = new System.Drawing.Size(97, 13);
             this.lblMouseCaption.TabIndex = 9;
@@ -164,7 +165,7 @@
             // lblName
             // 
             this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(118, 11);
+            this.lblName.Location = new System.Drawing.Point(128, 11);
             this.lblName.Name = "lblName";
             this.lblName.Size = new System.Drawing.Size(35, 13);
             this.lblName.TabIndex = 8;
@@ -173,7 +174,7 @@
             // lblImage
             // 
             this.lblImage.AutoSize = true;
-            this.lblImage.Location = new System.Drawing.Point(7, 11);
+            this.lblImage.Location = new System.Drawing.Point(40, 11);
             this.lblImage.Name = "lblImage";
             this.lblImage.Size = new System.Drawing.Size(36, 13);
             this.lblImage.TabIndex = 7;
@@ -193,6 +194,7 @@
             this.tbMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnLoad,
             this.btnSave,
+            this.btnClear,
             this.toolStripSeparator1,
             this.btnRun,
             this.toolStripSeparator2,
@@ -226,6 +228,16 @@
             this.btnSave.Text = "Save macro";
             this.btnSave.ToolTipText = "Save macro";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnClear
+            // 
+            this.btnClear.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnClear.Image = global::AutomatedWorker.Properties.Resources.clear;
+            this.btnClear.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(23, 22);
+            this.btnClear.Text = "Clear";
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // toolStripSeparator1
             // 
@@ -278,7 +290,7 @@
             // btnClose
             // 
             this.btnClose.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnClose.Image = global::AutomatedWorker.Properties.Resources.exit;
+            this.btnClose.Image = ((System.Drawing.Image)(resources.GetObject("btnClose.Image")));
             this.btnClose.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(23, 22);
@@ -295,6 +307,7 @@
             this.Controls.Add(this.pnlJob);
             this.Controls.Add(this.lblJobCaption);
             this.Controls.Add(this.txtJobName);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Automated worker";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -332,5 +345,6 @@
         private System.Windows.Forms.ToolStripButton btnExistedFragment;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton btnClose;
+        private System.Windows.Forms.ToolStripButton btnClear;
     }
 }

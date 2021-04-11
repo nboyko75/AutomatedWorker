@@ -43,6 +43,16 @@ namespace JobData
     public class StoreObject
     {
         public string ObjectName { get; }
+        protected string dataDir;
+        protected DataStore objects;
+
+        public StoreObject(string pObjectName, string pDataDir)
+        {
+            ObjectName = pObjectName;
+            dataDir = pDataDir;
+            objects = new DataStore($"{dataDir}\\{ObjectName}.json");
+        }
+
         public List<T> GetItems<T>() where T : DataClass
         {
             return objects.GetCollection<T>().GetItems()
@@ -67,16 +77,6 @@ namespace JobData
         {
             var collection = objects.GetCollection<T>();
             return collection.Count;
-        }
-
-        protected string dataDir;
-        protected DataStore objects;
-
-        public StoreObject(string pObjectName, string pDataDir)
-        {
-            ObjectName = pObjectName;
-            dataDir = pDataDir;
-            objects = new DataStore($"{dataDir}\\{ObjectName}.json");
         }
 
         public void Add<T>(T NewObj) where T : DataClass
@@ -117,6 +117,12 @@ namespace JobData
             {
                 collection.DeleteOne(obj.Id);
             }
+        }
+
+        public void DeleteAll<T>() where T : DataClass
+        {
+            var collection = objects.GetCollection<T>();
+            collection.DeleteMany(o => true);
         }
     }
 

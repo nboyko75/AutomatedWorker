@@ -11,13 +11,10 @@ namespace AutomatedWorker.Forms
 {
     public partial class MainForm : Form
     {
-        #region Attributes
-        private readonly ApplicationWatcher applicationWatcher;
-        private readonly EventHookFactory eventHookFactory = new EventHookFactory();
-        private readonly KeyboardWatcher keyboardWatcher;
-        private readonly ClipboardWatcher clipboardWatcher;
+        private const int defaultMousePadding = 10;
 
-        private readonly MouseWatcher mouseWatcher;
+        #region Attributes
+        private EventHookFactory eventHookFactory;
         private Mouse.MousePoint mousePoint;
         private ScreenshotMaker screenshotMaker;
         private Runner runner;
@@ -35,22 +32,10 @@ namespace AutomatedWorker.Forms
         {
             InitializeComponent();
 
-            mouseWatcher = eventHookFactory.GetMouseWatcher();
-            keyboardWatcher = eventHookFactory.GetKeyboardWatcher();
-            clipboardWatcher = eventHookFactory.GetClipboardWatcher();
-            applicationWatcher = eventHookFactory.GetApplicationWatcher();
-            // printWatcher = eventHookFactory.GetPrintWatcher();
-
             Application.ApplicationExit += OnApplicationExit;
-            mouseWatcher.OnMouseInput += OnMouseInput;
-            keyboardWatcher.OnKeyInput += OnKeyInput;
-            clipboardWatcher.OnClipboardModified += OnClipboardModified;
-            applicationWatcher.OnApplicationWindowChange += OnApplicationWindowChange;
-            /* printWatcher.OnPrintEvent += OnPrintEvent;
-            }; */
+            eventHookFactory = new EventHookFactory();
             screenshotMaker = new ScreenshotMaker();
             runner = new Runner();
-
             config = new Config();
             jobManager = new JobManager();
             objectManager = new ObjectManager();
@@ -60,13 +45,11 @@ namespace AutomatedWorker.Forms
         #region Events
         protected void MainForm_Load(object sender, EventArgs e)
         {
-            startWatch();
             SetDefaultJob();
         }
 
         protected void OnApplicationExit(object sender, EventArgs e)
         {
-            stopWatch();
             eventHookFactory.Dispose();
         }
 
@@ -93,6 +76,13 @@ namespace AutomatedWorker.Forms
         protected void btnSave_Click(object sender, EventArgs e)
         {
             job.Save();
+        }
+
+        protected void btnClear_Click(object sender, EventArgs e)
+        {
+            pnlOperations.Controls.Clear();
+            job.Clear();
+            SetDefaultJob();
         }
 
         protected void btnRun_Click(object sender, EventArgs e)
@@ -133,7 +123,7 @@ namespace AutomatedWorker.Forms
             Mouse.MousePoint formLocation = Mouse.GetAppropriatedFormPoint(mousePoint, objectForm.Size.Width, objectForm.Size.Height);
             objectForm.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
             objectForm.ShowDialog(this);
-            if (objectForm.DialogResult == DialogResult.OK)
+            if (objectForm.DialogResult == DialogResult.OK && objectForm.SelectedObject != null)
             {
                 AddOperation(objectForm.SelectedObject);
             }
@@ -141,10 +131,9 @@ namespace AutomatedWorker.Forms
         #endregion
 
         #region Private methods
-        private void AddOperation(ActObject obj) 
+        private void AddOperation(ActObject obj)
         {
-            System.Windows.Point screenShotPoint = screenshotMaker.GetCenterPoint();
-            AddOperation(obj, (int)screenShotPoint.X, (int)screenShotPoint.Y);
+            AddOperation(obj, defaultMousePadding, defaultMousePadding);
         }
 
         private void AddOperation(ActObject obj, int x, int y)
@@ -153,100 +142,32 @@ namespace AutomatedWorker.Forms
             job.Add(obj, x, y);
         }
 
-        /* Не працює в режимі відладки */
-        private void startWatch()
-        {
-            // mouseWatcher.Start();
-            keyboardWatcher.Start();
-            /* clipboardWatcher.Start();
-            applicationWatcher.Start(); */
-            // printWatcher.Start();
-        }
-
-        private void stopWatch()
-        {
-            keyboardWatcher.Stop();
-            // mouseWatcher.Stop();
-            /* clipboardWatcher.Stop();
-            applicationWatcher.Stop(); */
-            // printWatcher.Stop();
-        }
-
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void OnMouseInput(object sender, EventHook.MouseEventArgs e)
+        private void SetDefaultJob()
         {
-            mousePoint.X = e.Point.x;
-            mousePoint.Y = e.Point.y;
-        }
-
-        private void OnKeyInput(object sender, KeyInputEventArgs e)
-        {
-            
-        }
-
-        private void OnClipboardModified(object sender, ClipboardEventArgs e)
-        {
-            // Console.WriteLine("Clipboard updated with data '{0}' of format {1}", e.Data, e.DataFormat.ToString());
-        }
-
-        private void OnApplicationWindowChange(object sender, ApplicationEventArgs e)
-        {
-            // Console.WriteLine("Application window of '{0}' with the title '{1}' was {2}", e.ApplicationData.AppName, e.ApplicationData.AppTitle, e.Event);
-        }
-
-        private void OnPrintEvent(object sender, PrintEventArgs e)
-        {
-            // Console.WriteLine("Printer '{0}' currently printing {1} pages.", e.EventData.PrinterName, e.EventData.Pages);
-        }
-
-        private void SetDefaultJob() 
-        {
-            string jobName = jobManager.GetNewJobName();
-            job = new Job(jobName, config.DataDir);
-            txtJobName.Text = jobName;
-        }
-
-        private void grdOperations_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            /* if (job == null)
+            string jobName = txtJobName.Text;
+            if (String.IsNullOrEmpty(jobName)) 
             {
-                return;
+                jobName = jobManager.GetNewJobName();
+                txtJobName.Text = jobName;
             }
-            DataRow row = tblOperations.Rows[e.RowIndex];
-            int id = (int)row["Id"];
-            switch (grdOperations.Columns[e.ColumnIndex].Name)
-            {
-                case "clDel":
-                    if (MessageBox.Show("Are you sure want to delete this record?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) 
-                    {
-                        grdOperations.Rows.RemoveAt(e.RowIndex);
-                        // row.Delete();
-                        job.Delete<Operation>(id);
-                    }
-                    break;
-                case "clImage":
-                    Operation op = job.GetItem<Operation>(id);
-                    if (op.Actor != null && op.Actor.ImageSrc.Length > 0)
-                    {
-                        ImageView imageView = new ImageView();
-                        imageView.LoadImage(op.Actor.ImageSrc);
-                        Mouse.MousePoint formLocation = Mouse.GetAppropriatedFormPoint(mousePoint, imageView.Size.Width, imageView.Size.Height);
-                        imageView.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
-                        imageView.Show();
-                    }
-                    break;
-            } */
+            SetDefaultJob(jobName);
+        }
+
+        private void SetDefaultJob(string jobName) 
+        {
+            job = new Job(jobName, config.DataDir);
+            job.setOwnerControl(pnlOperations);
         }
 
         private void loadJob() 
         {
+            job.setOwnerControl(pnlOperations);
             job.Load();
-            pnlOperations.Controls.Clear();
-            pnlOperations.Controls.AddRange(job.Panels.ToArray());
         }
         #endregion
     }

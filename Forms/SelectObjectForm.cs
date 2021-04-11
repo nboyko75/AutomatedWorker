@@ -9,7 +9,7 @@ namespace AutomatedWorker.Forms
     {
         public string SelectedObjectName { get { return cmbObject.Text; } }
 
-        public ActObject SelectedObject { get { return objectList[cmbObject.SelectedIndex]; } }
+        public ActObject SelectedObject { get { return hasSelection() ? objectList[cmbObject.SelectedIndex] : null; } }
 
         public List<ActObject> ObjectList { get { return objectList; } }
 
@@ -33,6 +33,26 @@ namespace AutomatedWorker.Forms
             {
                 cmbObject.Items.Add(o.Name);
             }
+        }
+
+        protected void SelectObjectForm_Shown(object sender, EventArgs e)
+        {
+            enableButtons();
+        }
+
+        protected void cmbObject_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            enableButtons();
+        }
+
+        private void enableButtons()
+        {
+            btnOk.Enabled = hasSelection();
+        }
+
+        private bool hasSelection() 
+        {
+            return cmbObject.SelectedIndex >= 0;
         }
     }
 }

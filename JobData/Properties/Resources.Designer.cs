@@ -61,6 +61,25 @@ namespace JobData.Properties {
         }
         
         /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap delete {
+            get {
+                object obj = ResourceManager.GetObject("delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Delete row.
+        /// </summary>
+        internal static string DeleteRow {
+            get {
+                return ResourceManager.GetString("DeleteRow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Double button click.
         /// </summary>
         internal static string DoubleButtonClick {

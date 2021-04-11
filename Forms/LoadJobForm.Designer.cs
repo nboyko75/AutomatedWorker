@@ -23,6 +23,7 @@ namespace AutomatedWorker.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoadJobForm));
             this.cmbJob = new System.Windows.Forms.ComboBox();
             this.lblSelectJob = new System.Windows.Forms.Label();
             this.lblJob = new System.Windows.Forms.Label();
@@ -94,6 +95,7 @@ namespace AutomatedWorker.Forms
             this.Controls.Add(this.lblJob);
             this.Controls.Add(this.lblSelectJob);
             this.Controls.Add(this.cmbJob);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LoadJobForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Load job form";

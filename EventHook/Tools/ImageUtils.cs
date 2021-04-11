@@ -12,7 +12,7 @@ namespace EventHook.Tools
     {
         public static void SaveImageToFile(BitmapSource image, string filePath)
         {
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            using (var fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
             {
                 BitmapEncoder encoder = new BmpBitmapEncoder();
                 encoder.Frames.Add(BitmapFrame.Create(image));
