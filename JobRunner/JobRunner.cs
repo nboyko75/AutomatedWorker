@@ -76,10 +76,11 @@ namespace JobRunner
                     mouse.Click_Left();
                     break;
                 case MouseClickType.RIGHTCLICK:
-                    mouse.Click_Left();
+                    mouse.Click_Right();
                     break;
                 case MouseClickType.DOUBLECLICK:
                     mouse.Click_Left();
+                    mouse.Click_Right();
                     break;
             }
         }

@@ -7,10 +7,10 @@ namespace Interceptor
 {
     public class Input
     {
-        private IntPtr context;
-        private Thread callbackThread;
         /* 0-10 Keyboard devices, 11-20 Mouse devices */
         const int MOUSE_DEVICE = 12;
+        private IntPtr context;
+        private Thread callbackThread;
 
         /// <summary>
         /// Determines whether the driver traps no keyboard events, all events, or a range of events in-between (down only, up only...etc). Set this before loading otherwise the driver will not filter any events and no keypresses can be sent.
@@ -64,9 +64,11 @@ namespace Interceptor
 
             if (context != IntPtr.Zero)
             {
-                callbackThread = new Thread(new ThreadStart(DriverCallback));
-                callbackThread.Priority = ThreadPriority.Highest;
-                callbackThread.IsBackground = true;
+                callbackThread = new Thread(new ThreadStart(DriverCallback))
+                {
+                    Priority = ThreadPriority.Highest,
+                    IsBackground = true
+                };
                 callbackThread.Start();
 
                 IsLoaded = true;
@@ -149,10 +151,11 @@ namespace Interceptor
         public void SendKey(Keys key, KeyState state)
         {
             Stroke stroke = new Stroke();
-            KeyStroke keyStroke = new KeyStroke();
-
-            keyStroke.Code = key;
-            keyStroke.State = state;
+            KeyStroke keyStroke = new KeyStroke
+            {
+                Code = key,
+                State = state
+            };
 
             stroke.Key = keyStroke;
 
@@ -352,8 +355,10 @@ namespace Interceptor
         public void SendMouseEvent(MouseState state)
         {
             Stroke stroke = new Stroke();
-            MouseStroke mouseStroke = new MouseStroke();
-            mouseStroke.State = state;
+            MouseStroke mouseStroke = new MouseStroke
+            {
+                State = state
+            };
 
             if (state == MouseState.ScrollUp)
             {
@@ -404,10 +409,11 @@ namespace Interceptor
             if (useDriver)
             {
                 Stroke stroke = new Stroke();
-                MouseStroke mouseStroke = new MouseStroke();
-
-                mouseStroke.X = deltaX;
-                mouseStroke.Y = deltaY;
+                MouseStroke mouseStroke = new MouseStroke
+                {
+                    X = deltaX,
+                    Y = deltaY
+                };
 
                 stroke.Mouse = mouseStroke;
                 stroke.Mouse.Flags = MouseFlags.MoveRelative;
@@ -429,10 +435,11 @@ namespace Interceptor
             if (useDriver)
             {
                 Stroke stroke = new Stroke();
-                MouseStroke mouseStroke = new MouseStroke();
-
-                mouseStroke.X = x;
-                mouseStroke.Y = y;
+                MouseStroke mouseStroke = new MouseStroke
+                {
+                    X = x,
+                    Y = y
+                };
 
                 stroke.Mouse = mouseStroke;
                 stroke.Mouse.Flags = MouseFlags.MoveAbsolute;
