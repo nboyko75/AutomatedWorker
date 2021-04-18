@@ -17,6 +17,10 @@ namespace JobData
         {
             config = new Config();
             jobs = new List<Job>();
+            if (!Directory.Exists(config.DataDir))
+            {
+                Directory.CreateDirectory(config.DataDir);
+            }
             FillJobs();
         }
 
