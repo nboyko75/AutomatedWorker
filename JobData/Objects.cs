@@ -31,6 +31,18 @@ namespace JobData
             dataDir = $"{rootDir}\\Data";
             imgDir = $"{rootDir}\\Img";
             dictDir = $"{rootDir}\\Dict";
+
+            checkDIrectoryExists(dataDir);
+            checkDIrectoryExists(imgDir);
+            checkDIrectoryExists(dictDir);
+        }
+
+        private void checkDIrectoryExists(string dirPath) 
+        {
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
         }
     }
 
