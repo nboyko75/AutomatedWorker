@@ -18,9 +18,23 @@ namespace JobData
             actObjects = new ActObjects(Config.OBJECTS, config.DictDir);
         }
 
-        public void Add(ActObject obj) 
+        public void Add(ActObject obj)
         {
-            actObjects.Add<ActObject>(obj);
+            if (!Exists(obj.Id.Value))
+            {
+                actObjects.Add<ActObject>(obj);
+            }
+        }
+
+        public ActObject Get(int id) 
+        {
+            return actObjects.GetItem<ActObject>(id);
+        }
+
+        public bool Exists(int id)
+        {
+            ActObject existedObj = actObjects.GetItem<ActObject>(id);
+            return existedObj != null;
         }
 
         public string getUniqueObjName()

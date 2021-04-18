@@ -99,14 +99,18 @@ namespace JobData
 
         protected void btnDelete_Click(object sender, EventArgs e) 
         {
-            Button btn = (Button)sender;
-            int opId;
-            if (Int32.TryParse(btn.Tag.ToString(), out opId)) 
+            DialogResult confirmRes = MessageBox.Show(resources.GetString("DeleteOperationConfirmation"),
+                resources.GetString("DeleteConfirmationTitle"), MessageBoxButtons.YesNo);
+            if (confirmRes == DialogResult.Yes)
             {
-                Operation op = GetItem<Operation>(opId);
-                if (op != null) 
+                Button btn = (Button)sender;
+                if (Int32.TryParse(btn.Tag.ToString(), out int opId))
                 {
-                    DeleteOperationPanel(op);
+                    Operation op = GetItem<Operation>(opId);
+                    if (op != null)
+                    {
+                        DeleteOperationPanel(op);
+                    }
                 }
             }
         }
@@ -126,11 +130,10 @@ namespace JobData
                 Tag = op.Id
             };
             btnDelete.Click += new EventHandler(btnDelete_Click);
-            opPanel.Controls.Add(btnDelete);
-            x += 30;
-
             ToolTip btnDeleteToolTip = new ToolTip();
             btnDeleteToolTip.SetToolTip(btnDelete, resources.GetString("DeleteRow"));
+            opPanel.Controls.Add(btnDelete);
+            x += 30;
 
             PictureBox opImage = new PictureBox
             {
@@ -142,6 +145,8 @@ namespace JobData
                 Tag = op.Id
             };
             opImage.MouseDoubleClick += OnImageDblClick;
+            ToolTip imgToolTip = new ToolTip();
+            imgToolTip.SetToolTip(opImage, resources.GetString("ImageHint"));
             opPanel.Controls.Add(opImage);
             x += 40;
 

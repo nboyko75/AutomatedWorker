@@ -71,6 +71,24 @@ namespace JobData.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Confirm delete.
+        /// </summary>
+        internal static string DeleteConfirmationTitle {
+            get {
+                return ResourceManager.GetString("DeleteConfirmationTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Are you sure to delete this item?.
+        /// </summary>
+        internal static string DeleteOperationConfirmation {
+            get {
+                return ResourceManager.GetString("DeleteOperationConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Delete row.
         /// </summary>
         internal static string DeleteRow {
@@ -85,6 +103,15 @@ namespace JobData.Properties {
         internal static string DoubleButtonClick {
             get {
                 return ResourceManager.GetString("DoubleButtonClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Double click for preview.
+        /// </summary>
+        internal static string ImageHint {
+            get {
+                return ResourceManager.GetString("ImageHint", resourceCulture);
             }
         }
         

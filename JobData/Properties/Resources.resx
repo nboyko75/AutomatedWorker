@@ -121,11 +121,20 @@
   <data name="delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="DeleteConfirmationTitle" xml:space="preserve">
+    <value>Confirm delete</value>
+  </data>
+  <data name="DeleteOperationConfirmation" xml:space="preserve">
+    <value>Are you sure to delete this item?</value>
+  </data>
   <data name="DeleteRow" xml:space="preserve">
     <value>Delete row</value>
   </data>
   <data name="DoubleButtonClick" xml:space="preserve">
     <value>Double button click</value>
+  </data>
+  <data name="ImageHint" xml:space="preserve">
+    <value>Double click for preview</value>
   </data>
   <data name="LeftButtonClick" xml:space="preserve">
     <value>Left button click</value>
