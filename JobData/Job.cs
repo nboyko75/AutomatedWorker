@@ -59,8 +59,11 @@ namespace JobData
             foreach (KeyValuePair<int, Panel> dictPair in operationToPanel)
             {
                 Operation op = operations.Find(o => o.Id == dictPair.Key);
-                Bind(op, false);
-                Add<Operation>(op);
+                if (op != null) 
+                {
+                    Bind(op, false);
+                    Add<Operation>(op);
+                }
             }
         }
 
