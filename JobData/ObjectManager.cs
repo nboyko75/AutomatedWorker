@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using EventHook.Tools;
 
 namespace JobData
@@ -7,8 +9,8 @@ namespace JobData
     {
         public const string DEFAULT_OBJECTNAME = "obj";
 
-        private Config config;
-        private ActObjects actObjects;
+        private readonly Config config;
+        private readonly ActObjects actObjects;
 
         public ActObjects Objects { get { return actObjects; } }
 
@@ -20,9 +22,14 @@ namespace JobData
 
         public void Add(ActObject obj)
         {
-            if (!Exists(obj.Id.Value))
+            bool isNew = !obj.Id.HasValue;
+            if (isNew || !Exists(obj.Id.Value))
             {
                 actObjects.Add<ActObject>(obj);
+                if (isNew)
+                {
+                    obj.Id = getMaxId() + 1;
+                }
             }
         }
 
@@ -45,6 +52,17 @@ namespace JobData
         public string getUniqueName(string prefix)
         {
             return $"{prefix}_{NumberUtils.GetUniqueNumber()}";
+        }
+
+        private int getMaxId()
+        {
+            int res = 0;
+            List<ActObject> objs = actObjects.GetItems<ActObject>();
+            if (objs.Count > 0)
+            {
+                res = objs.Max(obj => obj.Id ?? 0);
+            }
+            return res;
         }
     }
 }

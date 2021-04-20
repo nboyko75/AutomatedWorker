@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using JsonFlatFileDataStore;
@@ -10,15 +11,13 @@ namespace JobData
 
     public class Config
     {
-        private string binDir;
-        private string rootDir;
-        private string dataDir;
-        private string imgDir;
-        private string dictDir;
+        private readonly string rootDir;
+        private readonly string dataDir;
+        private readonly string imgDir;
+        private readonly string dictDir;
 
         public const string OBJECTS = "Objects";
         public const MouseClickType DEFMOUSE_CLICKTYPE = MouseClickType.LEFTCLICK;
-        public string BinDir { get { return binDir; } }
         public string RootDir { get { return rootDir; } }
         public string DataDir { get { return dataDir; } }
         public string ImgDir { get { return imgDir; } }
@@ -26,8 +25,7 @@ namespace JobData
 
         public Config()
         {
-            binDir = Directory.GetCurrentDirectory();
-            rootDir = Directory.GetParent(binDir).Parent.FullName;
+            rootDir = AppDomain.CurrentDomain.BaseDirectory;
             dataDir = $"{rootDir}\\Data";
             imgDir = $"{rootDir}\\Img";
             dictDir = $"{rootDir}\\Dict";

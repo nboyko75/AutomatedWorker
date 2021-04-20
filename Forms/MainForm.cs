@@ -13,7 +13,6 @@ namespace AutomatedWorker.Forms
         private const int defaultMousePadding = 10;
 
         #region Attributes
-        private EventHookFactory eventHookFactory;
         private Mouse.MousePoint mousePoint;
         private ScreenshotMaker screenshotMaker;
         private Runner runner;
@@ -31,8 +30,6 @@ namespace AutomatedWorker.Forms
         {
             InitializeComponent();
 
-            Application.ApplicationExit += OnApplicationExit;
-            eventHookFactory = new EventHookFactory();
             screenshotMaker = new ScreenshotMaker();
             runner = new Runner();
             config = new Config();
@@ -45,11 +42,6 @@ namespace AutomatedWorker.Forms
         protected void MainForm_Load(object sender, EventArgs e)
         {
             SetDefaultJob();
-        }
-
-        protected void OnApplicationExit(object sender, EventArgs e)
-        {
-            eventHookFactory.Dispose();
         }
 
         protected void btnLoadJob_Click(object sender, EventArgs e)
