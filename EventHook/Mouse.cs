@@ -10,6 +10,7 @@ namespace EventHook
     public class Mouse
     {
         private Input simulator;
+        private IntPtr pMouse;
         private static int screenWidth = Screen.PrimaryScreen.Bounds.Width;
         private static int screenHeight = Screen.PrimaryScreen.Bounds.Height;
 
@@ -31,21 +32,24 @@ namespace EventHook
             simulator = new Input();
             simulator.KeyboardFilterMode = KeyboardFilterMode.All;
             simulator.Load();
+            pMouse = HidDriver.CreateMouse();
         }
 
         #region static methods: click
         public void Click_Left()
         {
-            simulator.SendLeftClick();
+            // simulator.SendLeftClick();
+            HidDriver.leftButtonClick(pMouse);
         }
 
         public void Click_Right()
         {
-            simulator.SendRightClick();
+            // simulator.SendRightClick();
+            HidDriver.rightButtonClick(pMouse);
         }
         #endregion
 
-        #region static methods: move
+        #region method move
         public void MoveTo(Point p)
         {
             moveTo(p, MouseSpeed.Natural);
@@ -77,7 +81,8 @@ namespace EventHook
         private void moveTo(Point p)
         {
             Point ap = getAbsoluteCoord(p);
-            simulator.MoveMouseTo(ap.X, ap.Y, true);
+            // simulator.MoveMouseTo(ap.X, ap.Y, true);
+            HidDriver.moveTo(pMouse, ap.X, ap.Y);
         }
 
         private void moveTo(Point p, MouseSpeed speed)
