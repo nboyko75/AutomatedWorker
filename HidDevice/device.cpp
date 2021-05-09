@@ -2,9 +2,9 @@
 #include <cfgmgr32.h>
 #include <hidsdi.h>
 #include <stdexcept>
+#include <iostream>
 
-Device::Device(PCWSTR deviceInterface)
-    : mp_deviceInterface{deviceInterface}
+Device::Device(PCWSTR devGuid) : mp_deviceGuid{ devGuid }
 {}
 
 void Device::initialize()
@@ -12,7 +12,8 @@ void Device::initialize()
     if (isInitialized()) throw std::runtime_error{"ERROR_DOUBLE_INITIALIZATION"};
 
     GUID guid;
-    HidD_GetHidGuid(&guid);
+    CLSIDFromString(mp_deviceGuid, &guid);
+    // HidD_GetHidGuid(&guid);
 
     ULONG deviceInterfaceListLength = 0;
     CONFIGRET configret = CM_Get_Device_Interface_List_Size(
@@ -21,10 +22,10 @@ void Device::initialize()
         nullptr,
         CM_GET_DEVICE_INTERFACE_LIST_PRESENT
     );
+
     if (CR_SUCCESS != configret) {
         throw std::runtime_error{"ERROR_GETTING_DEVICE_INTERFACE_LIST_SIZE"};
     }
-
     if (deviceInterfaceListLength <= 1) {
         throw std::runtime_error{"ERROR_EMPTY_DEVICE_INTERFACE_LIST"};
     }
@@ -47,15 +48,19 @@ void Device::initialize()
         throw std::runtime_error{"ERROR_GETTING_DEVICE_INTERFACE_LIST"};
     }
 
-    size_t deviceInterfaceLength = wcslen(mp_deviceInterface);
+    std::wcout << L"mp_devGuid = " << std::wstring(mp_deviceGuid) << std::endl;
+    // size_t deviceInterfaceLength = wcslen(mp_deviceInterface);
     HANDLE file = INVALID_HANDLE_VALUE;
     for (PWSTR currentInterface = deviceInterfaceList; *currentInterface; currentInterface += wcslen(currentInterface) + 1) {
+        /* std::wcout << L"currentInterface = " << std::wstring(currentInterface) << std::endl;
         if (0 != wcsncmp(currentInterface, mp_deviceInterface, deviceInterfaceLength)) {
             continue;
-        }
+        } */
 
+        std::wcout << L"CreateFile " << std::wstring(currentInterface) << std::endl;
         file = CreateFile(currentInterface, GENERIC_WRITE, FILE_SHARE_WRITE, nullptr, OPEN_EXISTING, 0, nullptr);
         if (INVALID_HANDLE_VALUE == file) {
+            std::wcout << L"CreateFile: INVALID_HANDLE_VALUE " << std::endl;
             continue;
         }
 

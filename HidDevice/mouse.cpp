@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include "registry.h"
 
-Mouse::Mouse() : Device{L"\\\\?\\HID#VARIABLE_6&Col02#1"}
+Mouse::Mouse() : Device{ L"{378DE44C-56EF-11D1-BC8C-00A0C91405DD}" }
 {}
 
 void Mouse::initialize()

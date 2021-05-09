@@ -1,5 +1,6 @@
 #include "mouse.h"
 #include <iostream>
+#include "mouseintf.h"
 
 Mouse* CreateMouse()
 {

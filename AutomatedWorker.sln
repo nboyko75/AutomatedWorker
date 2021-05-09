@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JsonFlatFileDataStore", "Js
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook", "EventHook\EventHook.csproj", "{0DBB4A00-4649-41DB-9B30-8249EAB0F535}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HidDevice", "HidDevice\HidDevice.vcxproj", "{CFA7FF4B-A662-4FF1-B771-C717550B2960}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HidDevice", "HidDevice\HidDevice.vcxproj", "{3547B08A-1787-4950-98BD-D9317DF4CFAC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -99,16 +99,16 @@ Global
 		{0DBB4A00-4649-41DB-9B30-8249EAB0F535}.Release|x64.Build.0 = Release|Any CPU
 		{0DBB4A00-4649-41DB-9B30-8249EAB0F535}.Release|x86.ActiveCfg = Release|Any CPU
 		{0DBB4A00-4649-41DB-9B30-8249EAB0F535}.Release|x86.Build.0 = Release|Any CPU
-		{CFA7FF4B-A662-4FF1-B771-C717550B2960}.Debug|Any CPU.ActiveCfg = Debug|Win32
-		{CFA7FF4B-A662-4FF1-B771-C717550B2960}.Debug|x64.ActiveCfg = Debug|x64
-		{CFA7FF4B-A662-4FF1-B771-C717550B2960}.Debug|x64.Build.0 = Debug|x64
-		{CFA7FF4B-A662-4FF1-B771-C717550B2960}.Debug|x86.ActiveCfg = Debug|Win32
-		{CFA7FF4B-A662-4FF1-B771-C717550B2960}.Debug|x86.Build.0 = Debug|Win32
-		{CFA7FF4B-A662-4FF1-B771-C717550B2960}.Release|Any CPU.ActiveCfg = Release|Win32
-		{CFA7FF4B-A662-4FF1-B771-C717550B2960}.Release|x64.ActiveCfg = Release|x64
-		{CFA7FF4B-A662-4FF1-B771-C717550B2960}.Release|x64.Build.0 = Release|x64
-		{CFA7FF4B-A662-4FF1-B771-C717550B2960}.Release|x86.ActiveCfg = Release|Win32
-		{CFA7FF4B-A662-4FF1-B771-C717550B2960}.Release|x86.Build.0 = Release|Win32
+		{3547B08A-1787-4950-98BD-D9317DF4CFAC}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3547B08A-1787-4950-98BD-D9317DF4CFAC}.Debug|x64.ActiveCfg = Debug|x64
+		{3547B08A-1787-4950-98BD-D9317DF4CFAC}.Debug|x64.Build.0 = Debug|x64
+		{3547B08A-1787-4950-98BD-D9317DF4CFAC}.Debug|x86.ActiveCfg = Debug|Win32
+		{3547B08A-1787-4950-98BD-D9317DF4CFAC}.Debug|x86.Build.0 = Debug|Win32
+		{3547B08A-1787-4950-98BD-D9317DF4CFAC}.Release|Any CPU.ActiveCfg = Release|Win32
+		{3547B08A-1787-4950-98BD-D9317DF4CFAC}.Release|x64.ActiveCfg = Release|x64
+		{3547B08A-1787-4950-98BD-D9317DF4CFAC}.Release|x64.Build.0 = Release|x64
+		{3547B08A-1787-4950-98BD-D9317DF4CFAC}.Release|x86.ActiveCfg = Release|Win32
+		{3547B08A-1787-4950-98BD-D9317DF4CFAC}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

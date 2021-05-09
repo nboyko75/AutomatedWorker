@@ -1,9 +1,7 @@
 #include "keyboard.h"
-
 #include <stdexcept>
 
-Keyboard::Keyboard()
-    : Device{L"\\\\?\\HID#VARIABLE_6&Col04#1"}
+Keyboard::Keyboard() : Device{ L"{884b96c3-56ef-11d1-bc8c-00a0c91405dd}" }
 {}
 
 void Keyboard::initialize()
