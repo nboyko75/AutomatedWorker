@@ -53,6 +53,7 @@
             this.btnExistedFragment = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.btnClose = new System.Windows.Forms.ToolStripButton();
+            this.lblContinue = new System.Windows.Forms.Label();
             this.pnlJob.SuspendLayout();
             this.pnlOperationsHeader.SuspendLayout();
             this.tbMain.SuspendLayout();
@@ -85,7 +86,7 @@
             this.pnlJob.Controls.Add(this.pnlOperationsHeader);
             this.pnlJob.Location = new System.Drawing.Point(12, 54);
             this.pnlJob.Name = "pnlJob";
-            this.pnlJob.Size = new System.Drawing.Size(716, 369);
+            this.pnlJob.Size = new System.Drawing.Size(810, 365);
             this.pnlJob.TabIndex = 19;
             this.pnlJob.TabStop = false;
             this.pnlJob.Text = "Macro operations";
@@ -97,7 +98,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlOperations.Location = new System.Drawing.Point(6, 65);
             this.pnlOperations.Name = "pnlOperations";
-            this.pnlOperations.Size = new System.Drawing.Size(704, 298);
+            this.pnlOperations.Size = new System.Drawing.Size(798, 294);
             this.pnlOperations.TabIndex = 8;
             // 
             // pnlOperationsHeader
@@ -105,6 +106,7 @@
             this.pnlOperationsHeader.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlOperationsHeader.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlOperationsHeader.Controls.Add(this.lblContinue);
             this.pnlOperationsHeader.Controls.Add(this.lblKeyboardText);
             this.pnlOperationsHeader.Controls.Add(this.lblClickType);
             this.pnlOperationsHeader.Controls.Add(this.lblMouseY);
@@ -114,7 +116,7 @@
             this.pnlOperationsHeader.Controls.Add(this.lblImage);
             this.pnlOperationsHeader.Location = new System.Drawing.Point(6, 19);
             this.pnlOperationsHeader.Name = "pnlOperationsHeader";
-            this.pnlOperationsHeader.Size = new System.Drawing.Size(704, 40);
+            this.pnlOperationsHeader.Size = new System.Drawing.Size(798, 40);
             this.pnlOperationsHeader.TabIndex = 7;
             // 
             // lblKeyboardText
@@ -204,7 +206,7 @@
             this.btnClose});
             this.tbMain.Location = new System.Drawing.Point(0, 0);
             this.tbMain.Name = "tbMain";
-            this.tbMain.Size = new System.Drawing.Size(740, 25);
+            this.tbMain.Size = new System.Drawing.Size(834, 25);
             this.tbMain.TabIndex = 21;
             // 
             // btnLoad
@@ -298,16 +300,28 @@
             this.btnClose.ToolTipText = "Exit";
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // lblContinue
+            // 
+            this.lblContinue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblContinue.AutoSize = true;
+            this.lblContinue.Location = new System.Drawing.Point(703, 4);
+            this.lblContinue.MaximumSize = new System.Drawing.Size(100, 0);
+            this.lblContinue.Name = "lblContinue";
+            this.lblContinue.Size = new System.Drawing.Size(91, 26);
+            this.lblContinue.TabIndex = 14;
+            this.lblContinue.Text = "Continue if image isn\'t found";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(740, 435);
+            this.ClientSize = new System.Drawing.Size(834, 431);
             this.Controls.Add(this.tbMain);
             this.Controls.Add(this.pnlJob);
             this.Controls.Add(this.lblJobCaption);
             this.Controls.Add(this.txtJobName);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(850, 300);
             this.Name = "MainForm";
             this.Text = "Automated worker";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
@@ -347,5 +361,6 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton btnClose;
         private System.Windows.Forms.ToolStripButton btnClear;
+        private System.Windows.Forms.Label lblContinue;
     }
 }

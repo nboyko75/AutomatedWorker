@@ -27,6 +27,27 @@ namespace AutomatedWorker.Forms
             btnOk.Enabled = true;
         }
 
+        protected void LoadJobForm_Load(object sender, EventArgs e)
+        {
+            System.Drawing.Point savedLocation = Properties.Settings.Default.LoadForm_Location;
+            if (savedLocation.X > 0 || savedLocation.Y > 0)
+            {
+                Location = savedLocation;
+            }
+            System.Drawing.Size savedSize = Properties.Settings.Default.LoadForm_Size;
+            if (savedSize.Width > 0 || savedSize.Height > 0)
+            {
+                Size = savedSize;
+            }
+        }
+
+        protected void LoadJobForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Properties.Settings.Default.LoadForm_Location = Location;
+            Properties.Settings.Default.LoadForm_Size = Size;
+            Properties.Settings.Default.Save();
+        }
+
         private void PopulateJobs() 
         {
             if (jobManager.JobNames.Count > 0)

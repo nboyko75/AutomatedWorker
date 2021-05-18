@@ -49,6 +49,17 @@ namespace AutomatedWorker.Forms
             string jobName = (string)getRegValue("jobName", DEFJOBNAME);
             txtJobName.Text = jobName;
             SetDefaultJob(jobName);
+
+            System.Drawing.Point savedLocation = Properties.Settings.Default.MainForm_Location;
+            if (savedLocation.X > 0 || savedLocation.Y > 0) 
+            {
+                Location = savedLocation;
+            }
+            System.Drawing.Size savedSize = Properties.Settings.Default.MainForm_Size;
+            if (savedSize.Width > 0 || savedSize.Height > 0) 
+            {
+                Size = savedSize;
+            }
         }
 
         protected void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -59,6 +70,9 @@ namespace AutomatedWorker.Forms
                 saveJob();
                 setRegValue("jobName", jobName);
             }
+            Properties.Settings.Default.MainForm_Location = Location;
+            Properties.Settings.Default.MainForm_Size = Size;
+            Properties.Settings.Default.Save();
         }
 
         protected void btnLoadJob_Click(object sender, EventArgs e)

@@ -159,5 +159,6 @@ namespace JobData
     {
         public ActObject Actor { get; set; }
         public Act Action { get; set; }
+        public bool ToContinue { get; set; }
     }
 }

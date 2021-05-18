@@ -13,7 +13,7 @@ namespace JobData
         private const int padding = 2;
         private const int marginY = padding + 5;
         private const int panelHeight = 30 + 2 * padding;
-        private const int panelWidth = 735;
+        private const int panelWidth = 795;
 
         private Control ownerControl;
         private List<Panel> panels;
@@ -86,7 +86,7 @@ namespace JobData
         {
             Act newAct = new Act { ActPoint = new Mouse.MousePoint { X = x, Y = y }, ClickType = Config.DEFMOUSE_CLICKTYPE };
             int newActId = GetCount<Operation>() + 1;
-            Operation newOp = new Operation { Id = newActId, Name = obj.Name, Actor = obj, Action = newAct };
+            Operation newOp = new Operation { Id = newActId, Name = obj.Name, Actor = obj, Action = newAct, ToContinue = false };
             Add<Operation>(newOp);
             AddOperationPanel(newOp);
         }
@@ -209,6 +209,17 @@ namespace JobData
                 TabIndex = i++
             };
             opPanel.Controls.Add(txtKeyboardText);
+            x += 190;
+
+            CheckBox chkContinue = new CheckBox
+            {
+                Anchor = (AnchorStyles)(AnchorStyles.Top | AnchorStyles.Right),
+                Location = new Point(x + 30, marginY),
+                Name = $"chkContinue{op.Id}",
+                TabIndex = i++
+            };
+            opPanel.Controls.Add(chkContinue);
+            x += 110;
 
             panels.Add(opPanel);
             operationToPanel.Add(op.Id.Value, opPanel);
@@ -293,6 +304,18 @@ namespace JobData
                     else
                     {
                         op.Action.KeyboardText = ctrl.Text;
+                    }
+                }
+                else if (name.StartsWith("chkContinue"))
+                {
+                    CheckBox chkContinue = (CheckBox)ctrl;
+                    if (toControls)
+                    {
+                        chkContinue.Checked = op.ToContinue;
+                    }
+                    else
+                    {
+                        op.ToContinue = chkContinue.Checked;
                     }
                 }
             }

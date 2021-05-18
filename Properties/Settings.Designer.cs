@@ -22,5 +22,53 @@ namespace AutomatedWorker.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point MainForm_Location {
+            get {
+                return ((global::System.Drawing.Point)(this["MainForm_Location"]));
+            }
+            set {
+                this["MainForm_Location"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size MainForm_Size {
+            get {
+                return ((global::System.Drawing.Size)(this["MainForm_Size"]));
+            }
+            set {
+                this["MainForm_Size"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point LoadForm_Location {
+            get {
+                return ((global::System.Drawing.Point)(this["LoadForm_Location"]));
+            }
+            set {
+                this["LoadForm_Location"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size LoadForm_Size {
+            get {
+                return ((global::System.Drawing.Size)(this["LoadForm_Size"]));
+            }
+            set {
+                this["LoadForm_Size"] = value;
+            }
+        }
     }
 }

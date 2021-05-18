@@ -33,10 +33,10 @@ namespace AutomatedWorker.Forms
             // lblSelectJob
             // 
             this.lblSelectJob.AutoSize = true;
-            this.lblSelectJob.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.lblSelectJob.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lblSelectJob.Location = new System.Drawing.Point(12, 9);
             this.lblSelectJob.Name = "lblSelectJob";
-            this.lblSelectJob.Size = new System.Drawing.Size(90, 17);
+            this.lblSelectJob.Size = new System.Drawing.Size(85, 16);
             this.lblSelectJob.TabIndex = 1;
             this.lblSelectJob.Text = "Select macro";
             // 
@@ -91,6 +91,8 @@ namespace AutomatedWorker.Forms
             this.Name = "LoadJobForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Macro list";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LoadJobForm_FormClosing);
+            this.Load += new System.EventHandler(this.LoadJobForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

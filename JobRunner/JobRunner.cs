@@ -38,11 +38,14 @@ namespace JobRunner
             {
                 Operation op = ops[i];
                 bool isLast = i == ops.Count - 1;
-                runOperation(op, isLast);
+                if (!runOperation(op, isLast)) 
+                {
+                    break;
+                }
             }
         }
 
-        private void runOperation(Operation op, bool isLast)
+        private bool runOperation(Operation op, bool isLast)
         {
             Bitmap img = new Bitmap(op.Actor.ImageSrc);
             Thread.Sleep(CHECKIMG_REPEAT_DELAY);
@@ -50,8 +53,15 @@ namespace JobRunner
             System.Drawing.Point? imgPoint = screen.GetFragmentPoint(img);
             if (!imgPoint.HasValue)
             {
-                 MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                 return;
+                if (!op.ToContinue)
+                {
+                    MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+                else 
+                {
+                    return true;
+                }
             }
             mouse.MoveTo(imgPoint.Value.X + op.Action.ActPoint.X, imgPoint.Value.Y + op.Action.ActPoint.Y);
 
@@ -69,6 +79,7 @@ namespace JobRunner
                     mouse.Click_Right();
                     break;
             }
+            return true;
         }
     }
 }
