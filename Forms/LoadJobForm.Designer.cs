@@ -24,24 +24,11 @@ namespace AutomatedWorker.Forms
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoadJobForm));
-            this.cmbJob = new System.Windows.Forms.ComboBox();
             this.lblSelectJob = new System.Windows.Forms.Label();
-            this.lblJob = new System.Windows.Forms.Label();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.lstJobs = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
-            // 
-            // cmbJob
-            // 
-            this.cmbJob.AllowDrop = true;
-            this.cmbJob.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cmbJob.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbJob.FormattingEnabled = true;
-            this.cmbJob.Location = new System.Drawing.Point(74, 36);
-            this.cmbJob.Name = "cmbJob";
-            this.cmbJob.Size = new System.Drawing.Size(287, 21);
-            this.cmbJob.TabIndex = 0;
             // 
             // lblSelectJob
             // 
@@ -49,23 +36,16 @@ namespace AutomatedWorker.Forms
             this.lblSelectJob.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.lblSelectJob.Location = new System.Drawing.Point(12, 9);
             this.lblSelectJob.Name = "lblSelectJob";
-            this.lblSelectJob.Size = new System.Drawing.Size(181, 17);
+            this.lblSelectJob.Size = new System.Drawing.Size(90, 17);
             this.lblSelectJob.TabIndex = 1;
-            this.lblSelectJob.Text = "Select job or enter new one";
-            // 
-            // lblJob
-            // 
-            this.lblJob.AutoSize = true;
-            this.lblJob.Location = new System.Drawing.Point(12, 39);
-            this.lblJob.Name = "lblJob";
-            this.lblJob.Size = new System.Drawing.Size(56, 13);
-            this.lblJob.TabIndex = 2;
-            this.lblJob.Text = "Job name:";
+            this.lblSelectJob.Text = "Select macro";
             // 
             // btnOk
             // 
+            this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(115, 74);
+            this.btnOk.Enabled = false;
+            this.btnOk.Location = new System.Drawing.Point(115, 213);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 3;
@@ -75,13 +55,26 @@ namespace AutomatedWorker.Forms
             // 
             // btnCancel
             // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(196, 74);
+            this.btnCancel.Location = new System.Drawing.Point(196, 213);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(71, 23);
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // lstJobs
+            // 
+            this.lstJobs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstJobs.FormattingEnabled = true;
+            this.lstJobs.Location = new System.Drawing.Point(15, 29);
+            this.lstJobs.Name = "lstJobs";
+            this.lstJobs.Size = new System.Drawing.Size(346, 173);
+            this.lstJobs.TabIndex = 5;
+            this.lstJobs.SelectedIndexChanged += new System.EventHandler(this.lstJobs_SelectedIndexChanged);
             // 
             // LoadJobForm
             // 
@@ -89,16 +82,15 @@ namespace AutomatedWorker.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(373, 118);
+            this.ClientSize = new System.Drawing.Size(373, 248);
+            this.Controls.Add(this.lstJobs);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOk);
-            this.Controls.Add(this.lblJob);
             this.Controls.Add(this.lblSelectJob);
-            this.Controls.Add(this.cmbJob);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LoadJobForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "Load job form";
+            this.Text = "Macro list";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -106,9 +98,8 @@ namespace AutomatedWorker.Forms
 
         #endregion
         private System.Windows.Forms.Label lblSelectJob;
-        private System.Windows.Forms.Label lblJob;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnCancel;
-        private ComboBox cmbJob;
+        private ListBox lstJobs;
     }
 }

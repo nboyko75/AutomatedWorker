@@ -19,24 +19,28 @@ namespace AutomatedWorker.Forms
         {
             InitializeComponent();
             jobManager = jobMng;
-            PopulateJobCombo();
+            PopulateJobs();
         }
 
-        private void PopulateJobCombo() 
+        protected void lstJobs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btnOk.Enabled = true;
+        }
+
+        private void PopulateJobs() 
         {
             if (jobManager.JobNames.Count > 0)
             {
                 foreach (string jobName in jobManager.JobNames)
                 {
-                    cmbJob.Items.Add(jobName);
+                    lstJobs.Items.Add(jobName);
                 }
-                cmbJob.SelectedIndex = 0;
             }
         }
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            selectedJobName = cmbJob.Text;
+            selectedJobName = lstJobs.SelectedItem.ToString();
         }
     }
 }
