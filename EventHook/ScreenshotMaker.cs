@@ -112,9 +112,9 @@ namespace EventHook
             rectBrush = br;
             rectThickness = RectThickness;
 
-            screenSource = CaptureScreen(ImageFormat.Bmp);
+            screenSource = CaptureScreen(ImageFormat.Png);
             // bmpImageOriginal = ImageUtils.BitmapImageFromSource(screenSource);
-            bmpImageOriginal = CaptureImageRect(ImageFormat.Bmp);
+            bmpImageOriginal = CaptureImageRect(ImageFormat.Png);
 
             imgSourceShaded = bmpImageOriginal;
             Rect imgRect = new Rect(new Point(0, 0), new Point(bmpImageOriginal.Width, bmpImageOriginal.Height));

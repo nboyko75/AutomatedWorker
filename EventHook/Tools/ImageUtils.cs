@@ -32,7 +32,7 @@ namespace EventHook.Tools
             byte[] res;
             using (MemoryStream ms = new MemoryStream())
             {
-                img.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                img.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                 res = ms.ToArray();
             }
             return res;
@@ -76,7 +76,7 @@ namespace EventHook.Tools
             if (source != null)
             {
                 MemoryStream ms = new MemoryStream();
-                source.Save(ms, System.Drawing.Imaging.ImageFormat.Bmp);
+                source.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
                 result = ms.ToArray();
             }
             return result;

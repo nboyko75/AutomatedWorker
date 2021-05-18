@@ -7,11 +7,9 @@ namespace AutomatedWorker.Forms
     public partial class LoadJobForm : Form
     {
         public string SelectedJobName { get { return selectedJobName; } }
-        public Job SelectedJob { get { return selectedJob; } }
 
         private JobManager jobManager;
         private string selectedJobName;
-        private Job selectedJob;
 
         public LoadJobForm() : this (new JobManager())
         {
@@ -26,11 +24,11 @@ namespace AutomatedWorker.Forms
 
         private void PopulateJobCombo() 
         {
-            if (jobManager.Jobs.Count > 0) 
+            if (jobManager.JobNames.Count > 0)
             {
-                foreach (Job j in jobManager.Jobs)
+                foreach (string jobName in jobManager.JobNames)
                 {
-                    cmbJob.Items.Add(j.ObjectName);
+                    cmbJob.Items.Add(jobName);
                 }
                 cmbJob.SelectedIndex = 0;
             }
@@ -39,7 +37,6 @@ namespace AutomatedWorker.Forms
         private void btnOk_Click(object sender, EventArgs e)
         {
             selectedJobName = cmbJob.Text;
-            selectedJob = jobManager.Jobs.Find(j => (j.ObjectName == selectedJobName));
         }
     }
 }

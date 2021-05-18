@@ -26,7 +26,7 @@ namespace EventHook
 
         public Bitmap GetScreenBitmap() 
         {
-            return screenshotMaker.GetBitmapRect(ImageFormat.Bmp);
+            return screenshotMaker.GetBitmapRect(ImageFormat.Png);
         }
 
         public void SaveScreenBitmapToFile(string filePath)

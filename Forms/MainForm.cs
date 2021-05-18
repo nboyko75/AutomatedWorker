@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
+using Microsoft.Win32;
 using JobData;
 using EventHook;
 using EventHook.Tools;
@@ -10,6 +11,9 @@ namespace AutomatedWorker.Forms
 {
     public partial class MainForm : Form
     {
+        private const string REGBASE = "Software";
+        private const string REGAPP = "AutomatedWorker";
+        private const string DEFJOBNAME = "job1";
         private const int defaultMousePadding = 10;
 
         #region Attributes
@@ -34,6 +38,7 @@ namespace AutomatedWorker.Forms
             runner = new Runner();
             config = new Config();
             jobManager = new JobManager();
+            jobForm = new LoadJobForm(jobManager);
             objectManager = new ObjectManager();
             mousePoint = Mouse.GetScreenCenterPoint();
         }
@@ -41,23 +46,31 @@ namespace AutomatedWorker.Forms
         #region Events
         protected void MainForm_Load(object sender, EventArgs e)
         {
-            SetDefaultJob();
+            string jobName = (string)getRegValue("jobName", DEFJOBNAME);
+            txtJobName.Text = jobName;
+            SetDefaultJob(jobName);
+        }
+
+        protected void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            string jobName = txtJobName.Text;
+            if (!string.IsNullOrEmpty(jobName))
+            {
+                saveJob();
+                setRegValue("jobName", jobName);
+            }
         }
 
         protected void btnLoadJob_Click(object sender, EventArgs e)
         {
-            if (jobForm == null)
-            {
-                jobForm = new LoadJobForm(jobManager);
-            }
             Mouse.MousePoint formLocation = Mouse.GetAppropriatedFormPoint(mousePoint, jobForm.Size.Width, jobForm.Size.Height);
             jobForm.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
             jobForm.ShowDialog(this);
             if (jobForm.DialogResult == DialogResult.OK)
             {
-                if (jobForm.SelectedJob != null)
+                if (!string.IsNullOrEmpty(jobForm.SelectedJobName))
                 {
-                    job = jobForm.SelectedJob;
+                    job = jobManager.GetJob(jobForm.SelectedJobName);
                     loadJob();
                     txtJobName.Text = job.ObjectName;
                 }
@@ -66,14 +79,13 @@ namespace AutomatedWorker.Forms
 
         protected void btnSave_Click(object sender, EventArgs e)
         {
-            job.Save();
+            saveJob();
         }
 
         protected void btnClear_Click(object sender, EventArgs e)
         {
             pnlOperations.Controls.Clear();
             job.Clear();
-            SetDefaultJob();
         }
 
         protected void btnRun_Click(object sender, EventArgs e)
@@ -92,7 +104,7 @@ namespace AutomatedWorker.Forms
                 return;
             }
             string objName = Microsoft.VisualBasic.Interaction.InputBox("Enter object name", "Object identification", objectManager.getUniqueObjName());
-            string imageSrc = $"{config.ImgDir}\\{objName}.bmp";
+            string imageSrc = $"{config.ImgDir}\\{objName}.png";
             ImageUtils.SaveImageToFile(bt, imageSrc);
 
             System.Windows.Point mousePoint = screenshotMaker.MouseClickRelativePoint;
@@ -143,7 +155,7 @@ namespace AutomatedWorker.Forms
             string jobName = txtJobName.Text;
             if (String.IsNullOrEmpty(jobName)) 
             {
-                jobName = jobManager.GetNewJobName();
+                jobName = DEFJOBNAME;
                 txtJobName.Text = jobName;
             }
             SetDefaultJob(jobName);
@@ -152,13 +164,46 @@ namespace AutomatedWorker.Forms
         private void SetDefaultJob(string jobName) 
         {
             job = new Job(jobName, config.DataDir);
-            job.setOwnerControl(pnlOperations);
+            loadJob();
         }
 
         private void loadJob() 
         {
             job.setOwnerControl(pnlOperations);
             job.Load();
+        }
+
+        private void saveJob() 
+        {
+            string jobName = txtJobName.Text;
+            if (job.ObjectName != jobName) 
+            {
+                job = new Job(jobName, config.DataDir);
+            }
+            job.Save();
+        }
+
+        private object getRegValue(string key, object defval)
+        {
+            RegistryKey basekey = Registry.CurrentUser.OpenSubKey(REGBASE, true);
+            RegistryKey appkey = basekey.OpenSubKey(REGAPP, true);
+            if (appkey == null) 
+            {
+                appkey = basekey.CreateSubKey(REGAPP);
+            }
+            object res = appkey.GetValue(key, defval);
+            appkey.Close();
+            basekey.Close();
+            return res;
+        }
+
+        private void setRegValue(string key, object val)
+        {
+            RegistryKey basekey = Registry.CurrentUser.OpenSubKey(REGBASE, true);
+            RegistryKey appkey = basekey.OpenSubKey(REGAPP, true);
+            appkey.SetValue(key, val);
+            appkey.Close();
+            basekey.Close();
         }
         #endregion
     }

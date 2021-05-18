@@ -13,7 +13,6 @@ namespace JobRunner
     public class Runner
     {
         #region Consts
-        public const int CHECKIMG_REPEAT_COUNT = 5;
         public const int CHECKIMG_REPEAT_DELAY = 1000;
         public const int CLICK_DELAY = 200;
         #endregion
@@ -51,21 +50,8 @@ namespace JobRunner
             System.Drawing.Point? imgPoint = screen.GetFragmentPoint(img);
             if (!imgPoint.HasValue)
             {
-                int repeatCount = 1;
-                bool toRepeat = true;
-                while (toRepeat)
-                {
-                    Thread.Sleep(CHECKIMG_REPEAT_DELAY);
-                    screen = new WorkerScreen();
-                    imgPoint = screen.GetFragmentPoint(img);
-                    repeatCount++;
-                    toRepeat = !imgPoint.HasValue && repeatCount <= CHECKIMG_REPEAT_COUNT;
-                }
-                if (!imgPoint.HasValue)
-                {
-                    MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                 MessageBox.Show(String.Format(resManager.GetString("ErrFragmentIsNotFound"), op.Name), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                 return;
             }
             mouse.MoveTo(imgPoint.Value.X + op.Action.ActPoint.X, imgPoint.Value.Y + op.Action.ActPoint.Y);
 
