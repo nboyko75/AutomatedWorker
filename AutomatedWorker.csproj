@@ -194,6 +194,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="mouse.ico" />
+    <None Include="Resources\cancel_button.png" />
+    <None Include="Resources\green_ok.png" />
     <None Include="Resources\mouse.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

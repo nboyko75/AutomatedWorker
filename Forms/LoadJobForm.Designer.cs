@@ -28,6 +28,7 @@ namespace AutomatedWorker.Forms
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.lstJobs = new System.Windows.Forms.ListBox();
+            this.btnDelete = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblSelectJob
@@ -45,23 +46,26 @@ namespace AutomatedWorker.Forms
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnOk.Enabled = false;
-            this.btnOk.Location = new System.Drawing.Point(115, 213);
+            this.btnOk.Image = global::AutomatedWorker.Properties.Resources.green_ok;
+            this.btnOk.Location = new System.Drawing.Point(70, 213);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
-            this.btnOk.TabIndex = 3;
+            this.btnOk.TabIndex = 2;
             this.btnOk.Text = "Ok";
+            this.btnOk.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnOk.UseVisualStyleBackColor = true;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(196, 213);
+            this.btnCancel.Image = global::AutomatedWorker.Properties.Resources.cancel_button;
+            this.btnCancel.Location = new System.Drawing.Point(232, 213);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(71, 23);
+            this.btnCancel.Size = new System.Drawing.Size(78, 23);
             this.btnCancel.TabIndex = 4;
             this.btnCancel.Text = "Cancel";
+            this.btnCancel.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // lstJobs
@@ -73,8 +77,24 @@ namespace AutomatedWorker.Forms
             this.lstJobs.Location = new System.Drawing.Point(15, 29);
             this.lstJobs.Name = "lstJobs";
             this.lstJobs.Size = new System.Drawing.Size(346, 173);
-            this.lstJobs.TabIndex = 5;
+            this.lstJobs.TabIndex = 1;
             this.lstJobs.SelectedIndexChanged += new System.EventHandler(this.lstJobs_SelectedIndexChanged);
+            this.lstJobs.DoubleClick += new System.EventHandler(this.lstJobs_DoubleClick);
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnDelete.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnDelete.Enabled = false;
+            this.btnDelete.Image = global::AutomatedWorker.Properties.Resources.delete;
+            this.btnDelete.Location = new System.Drawing.Point(151, 213);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(75, 23);
+            this.btnDelete.TabIndex = 3;
+            this.btnDelete.Text = "Delete";
+            this.btnDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // LoadJobForm
             // 
@@ -83,6 +103,7 @@ namespace AutomatedWorker.Forms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(373, 248);
+            this.Controls.Add(this.btnDelete);
             this.Controls.Add(this.lstJobs);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOk);
@@ -103,5 +124,6 @@ namespace AutomatedWorker.Forms
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnCancel;
         private ListBox lstJobs;
+        private Button btnDelete;
     }
 }

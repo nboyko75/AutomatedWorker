@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
-using Microsoft.Win32;
 using JobData;
 using EventHook;
 using EventHook.Tools;
@@ -13,7 +12,6 @@ namespace AutomatedWorker.Forms
     {
         private const string REGBASE = "Software";
         private const string REGAPP = "AutomatedWorker";
-        private const string DEFJOBNAME = "job1";
         private const int defaultMousePadding = 10;
 
         #region Attributes
@@ -46,7 +44,7 @@ namespace AutomatedWorker.Forms
         #region Events
         protected void MainForm_Load(object sender, EventArgs e)
         {
-            string jobName = (string)getRegValue("jobName", DEFJOBNAME);
+            string jobName = Properties.Settings.Default.LastJobName;
             txtJobName.Text = jobName;
             SetDefaultJob(jobName);
 
@@ -68,7 +66,7 @@ namespace AutomatedWorker.Forms
             if (!string.IsNullOrEmpty(jobName))
             {
                 saveJob();
-                setRegValue("jobName", jobName);
+                Properties.Settings.Default.LastJobName = jobName;
             }
             Properties.Settings.Default.MainForm_Location = Location;
             Properties.Settings.Default.MainForm_Size = Size;
@@ -111,7 +109,7 @@ namespace AutomatedWorker.Forms
 
         protected void btnNew_Click(object sender, EventArgs e)
         {
-            // this.WindowState = FormWindowState.Minimized;
+            this.Hide();
             BitmapSource bt = screenshotMaker.BeginSelectionImageFromScreen();
             if (bt == null) 
             {
@@ -124,7 +122,7 @@ namespace AutomatedWorker.Forms
             System.Windows.Point mousePoint = screenshotMaker.MouseClickRelativePoint;
             ActObject newActObj = new ActObject { Name = objName, ImageSrc = imageSrc };
             AddOperation(newActObj, (int)mousePoint.X, (int)mousePoint.Y);
-            // this.WindowState = FormWindowState.Normal;
+            this.Show();
         }
 
         protected void btnAdd_Click(object sender, EventArgs e)
@@ -135,7 +133,7 @@ namespace AutomatedWorker.Forms
             }
             else
             {
-                objectForm.FillObjects();
+                objectForm.PopulateObjects();
             }
             Mouse.MousePoint formLocation = Mouse.GetAppropriatedFormPoint(mousePoint, objectForm.Size.Width, objectForm.Size.Height);
             objectForm.Location = new System.Drawing.Point(formLocation.X, formLocation.Y);
@@ -164,17 +162,6 @@ namespace AutomatedWorker.Forms
             this.Close();
         }
 
-        private void SetDefaultJob()
-        {
-            string jobName = txtJobName.Text;
-            if (String.IsNullOrEmpty(jobName)) 
-            {
-                jobName = DEFJOBNAME;
-                txtJobName.Text = jobName;
-            }
-            SetDefaultJob(jobName);
-        }
-
         private void SetDefaultJob(string jobName) 
         {
             job = new Job(jobName, config.DataDir);
@@ -195,29 +182,8 @@ namespace AutomatedWorker.Forms
                 job = new Job(jobName, config.DataDir);
             }
             job.Save();
-        }
-
-        private object getRegValue(string key, object defval)
-        {
-            RegistryKey basekey = Registry.CurrentUser.OpenSubKey(REGBASE, true);
-            RegistryKey appkey = basekey.OpenSubKey(REGAPP, true);
-            if (appkey == null) 
-            {
-                appkey = basekey.CreateSubKey(REGAPP);
-            }
-            object res = appkey.GetValue(key, defval);
-            appkey.Close();
-            basekey.Close();
-            return res;
-        }
-
-        private void setRegValue(string key, object val)
-        {
-            RegistryKey basekey = Registry.CurrentUser.OpenSubKey(REGBASE, true);
-            RegistryKey appkey = basekey.OpenSubKey(REGAPP, true);
-            appkey.SetValue(key, val);
-            appkey.Close();
-            basekey.Close();
+            jobManager.AddJob(jobName);
+            jobForm.PopulateJobs();
         }
         #endregion
     }

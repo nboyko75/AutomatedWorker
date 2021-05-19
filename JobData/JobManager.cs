@@ -23,6 +23,16 @@ namespace JobData
             return new Job(jobName, config.DataDir);
         }
 
+        public void AddJob(string jobName) 
+        {
+            int existedJobName = jobNames.IndexOf(jobName);
+            if (existedJobName < 0) 
+            {
+                jobNames.Add(jobName);
+                SortJobs();
+            }
+        }
+
         private void FillJobs()
         {
             DirectoryInfo dirInfo = new DirectoryInfo(config.DataDir);
@@ -30,6 +40,11 @@ namespace JobData
             {
                 jobNames.Add(Path.GetFileNameWithoutExtension(file.Name));
             }
+            SortJobs();
+        }
+
+        private void SortJobs() 
+        {
             jobNames.Sort((j1, j2) => j1.CompareTo(j2));
         }
     }

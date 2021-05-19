@@ -7,9 +7,9 @@ namespace AutomatedWorker.Forms
 {
     public partial class SelectObjectForm : Form
     {
-        public string SelectedObjectName { get { return cmbObject.Text; } }
+        public string SelectedObjectName { get { return lstFragments.SelectedItem.ToString(); } }
 
-        public ActObject SelectedObject { get { return hasSelection() ? objectList[cmbObject.SelectedIndex] : null; } }
+        public ActObject SelectedObject { get { return hasSelection() ? objectList[lstFragments.SelectedIndex] : null; } }
 
         public List<ActObject> ObjectList { get { return objectList; } }
 
@@ -22,37 +22,61 @@ namespace AutomatedWorker.Forms
             InitializeComponent();
             config = new Config();
             objectManager = new ObjectManager();
-            FillObjects();
+            PopulateObjects();
         }
 
-        public void FillObjects()
+        public void PopulateObjects()
         {
-            cmbObject.Items.Clear();
+            lstFragments.Items.Clear();
             objectList = objectManager.Objects.GetSortedItems<ActObject>();
             foreach (ActObject o in objectList)
             {
-                cmbObject.Items.Add(o.Name);
+                lstFragments.Items.Add(o.Name);
             }
         }
 
-        protected void SelectObjectForm_Shown(object sender, EventArgs e)
+
+        protected void SelectObjectForm_Load(object sender, EventArgs e)
         {
-            enableButtons();
+            System.Drawing.Point savedLocation = Properties.Settings.Default.SelectObjectForm_Location;
+            if (savedLocation.X > 0 || savedLocation.Y > 0)
+            {
+                Location = savedLocation;
+            }
+            System.Drawing.Size savedSize = Properties.Settings.Default.SelectObjectForm_Size;
+            if (savedSize.Width > 0 || savedSize.Height > 0)
+            {
+                Size = savedSize;
+            }
         }
 
-        protected void cmbObject_SelectedIndexChanged(object sender, EventArgs e)
+        protected void SelectObjectForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            enableButtons();
+            Properties.Settings.Default.SelectObjectForm_Location = Location;
+            Properties.Settings.Default.SelectObjectForm_Size = Size;
+            Properties.Settings.Default.Save();
         }
 
-        private void enableButtons()
+        protected void lstFragments_SelectedIndexChanged(object sender, EventArgs e)
         {
-            btnOk.Enabled = hasSelection();
+            btnOk.Enabled = true;
+            btnDelete.Enabled = true;
+        }
+
+        protected void lstFragments_DoubleClick(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        protected void btnDelete_Click(object sender, EventArgs e)
+        {
+
         }
 
         private bool hasSelection() 
         {
-            return cmbObject.SelectedIndex >= 0;
+            return lstFragments.SelectedIndex >= 0;
         }
     }
 }

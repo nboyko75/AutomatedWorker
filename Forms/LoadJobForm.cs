@@ -6,10 +6,9 @@ namespace AutomatedWorker.Forms
 {
     public partial class LoadJobForm : Form
     {
-        public string SelectedJobName { get { return selectedJobName; } }
+        public string SelectedJobName { get { return lstJobs.SelectedItem.ToString(); } }
 
         private JobManager jobManager;
-        private string selectedJobName;
 
         public LoadJobForm() : this (new JobManager())
         {
@@ -22,9 +21,22 @@ namespace AutomatedWorker.Forms
             PopulateJobs();
         }
 
+        public void PopulateJobs()
+        {
+            lstJobs.Items.Clear();
+            if (jobManager.JobNames.Count > 0)
+            {
+                foreach (string jobName in jobManager.JobNames)
+                {
+                    lstJobs.Items.Add(jobName);
+                }
+            }
+        }
+
         protected void lstJobs_SelectedIndexChanged(object sender, EventArgs e)
         {
             btnOk.Enabled = true;
+            btnDelete.Enabled = true;
         }
 
         protected void LoadJobForm_Load(object sender, EventArgs e)
@@ -48,20 +60,15 @@ namespace AutomatedWorker.Forms
             Properties.Settings.Default.Save();
         }
 
-        private void PopulateJobs() 
+        protected void lstJobs_DoubleClick(object sender, EventArgs e)
         {
-            if (jobManager.JobNames.Count > 0)
-            {
-                foreach (string jobName in jobManager.JobNames)
-                {
-                    lstJobs.Items.Add(jobName);
-                }
-            }
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
+        protected void btnDelete_Click(object sender, EventArgs e)
         {
-            selectedJobName = lstJobs.SelectedItem.ToString();
+
         }
     }
 }

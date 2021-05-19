@@ -70,5 +70,41 @@ namespace AutomatedWorker.Properties {
                 this["LoadForm_Size"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Point SelectObjectForm_Location {
+            get {
+                return ((global::System.Drawing.Point)(this["SelectObjectForm_Location"]));
+            }
+            set {
+                this["SelectObjectForm_Location"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
+        public global::System.Drawing.Size SelectObjectForm_Size {
+            get {
+                return ((global::System.Drawing.Size)(this["SelectObjectForm_Size"]));
+            }
+            set {
+                this["SelectObjectForm_Size"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("job1")]
+        public string LastJobName {
+            get {
+                return ((string)(this["LastJobName"]));
+            }
+            set {
+                this["LastJobName"] = value;
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Windows;
@@ -81,10 +82,10 @@ namespace EventHook
         /// </summary>
         SolidColorBrush solidColorBrush;
 
-        int mouseClickCount = 0;
+        private int mouseClickCount = 0;
         public Point MouseClickPoint { get { return mouseClickPoint; } }
         public Point MouseClickRelativePoint { get { return new Point(mouseClickPoint.X - firstPoint.X, mouseClickPoint.Y - firstPoint.Y); } }
-        Point mouseClickPoint;
+        private Point mouseClickPoint;
         #endregion
 
         #region Public methods
